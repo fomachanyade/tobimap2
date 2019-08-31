@@ -1,0 +1,14 @@
+<mat-toolbar color="primary">
+    <div fxHide.gt-xs>
+            <button mat-icon-button class="header-icon" (click)="onToggleSidenav()">
+                <mat-icon aria-label="manu icon">menu</mat-icon>
+            </button>
+    </div>
+    <div class="app-title">
+        <a>Tobi Map</a>
+    </div>
+    <span class="header-spacer"></span>
+    <button mat-icon-button class="header-icon" (click)="onToggleSidenav()">
+        <mat-icon aria-hidden="false" aria-label="user icon">home</mat-icon>
+    </button>
+</mat-toolbar>
