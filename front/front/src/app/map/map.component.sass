@@ -1,0 +1,28 @@
+.map 
+    width: 100%
+    height: 100%
+    .ol-rotate
+        top: 170px
+        right: 0
+    .ol-custom-overviewmap
+        bottom: auto
+        left: auto
+        right: 0
+        top: 0
+        .ol-uncollapsible 
+            bottom: auto
+            left: auto
+            right: 0
+            top: 0
+        &:not(.ol-collapsed)  
+            border: 1px solid black
+            button
+                bottom: auto
+                left: auto
+                right: 1px
+                top: 1px
+        .ol-overviewmap-map 
+            border: none
+            width: 300px
+        .ol-overviewmap-box 
+            border: 2px solid red

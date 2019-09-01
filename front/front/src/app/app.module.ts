@@ -11,11 +11,13 @@ import { MatButtonModule, MatCheckboxModule, MatDatepickerModule, MatNativeDateM
 import { MatToolbarModule} from '@angular/material/toolbar';
 
 import { HeaderComponent } from './header/header.component';
+import { MapComponent } from './map/map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,
