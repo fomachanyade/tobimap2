@@ -8,8 +8,9 @@ import View from 'ol/View';
 import Draw from 'ol/interaction/Draw.js';
 import {defaults as defaultControls, OverviewMap, Control} from 'ol/control.js';
 import {defaults as defaultInteractions, DragRotateAndZoom} from 'ol/interaction.js';
+import { fromLonLat, toLonLat } from 'ol/proj';
 
-import { fromLonLat } from 'ol/proj';
+import { MapPointService } from '../services/mapPointService/map-point.service';
 
 @Component({
   selector: 'app-map',
@@ -26,7 +27,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   view: View;
   draw: Draw;
   
-  constructor() { }
+  constructor(private mapPointService : MapPointService) { }
 
   ngOnInit() {
 
@@ -79,6 +80,15 @@ export class MapComponent implements OnInit, AfterViewInit {
     //set target relement in afterViewInit for rendering proper]y
     //https://stackoverflow.com/questions/48283679/use-openlayers-4-with-angular-5
     this.map.setTarget('map');
+    this.getMapPoint();
+    
   }
 
+  getMapPoint() : void {
+    const thisMap = this.map;
+    const service =  this.mapPointService;
+    this.map.on('click', (evt) => {
+      service.initMapPointDialog(toLonLat(evt.coordinate));
+    });
+  }
 }

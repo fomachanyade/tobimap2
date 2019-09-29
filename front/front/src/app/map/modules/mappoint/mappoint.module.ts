@@ -13,5 +13,12 @@ export class MappointModule {
   order: number;
   name: string;
   description: string;
-  coordninate: number[];
+  coordinate: number[];
+
+  constructor(order: number, coordinate:number[], name?:string, description?: string) {
+    this.order = order;
+    this.name = name;
+    this.description = description;
+    this.coordinate = coordinate;
+  }
 }
