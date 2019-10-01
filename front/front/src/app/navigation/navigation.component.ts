@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {MappointModule} from '../map/modules/mappoint/mappoint.module';
+import { MapPointService } from '../services/mapPointService/map-point.service';
 
 @Component({
   selector: 'app-navigation',
@@ -6,12 +8,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navigation.component.sass']
 })
 export class NavigationComponent implements OnInit {
-
-  fillerNav = Array.from({length: 50}, (_, i) => `Nav Item ${i + 1}`);
+  mapPointArray: MappointModule[];
   
-  constructor() { }
+  constructor(private mapPointService : MapPointService) { }
 
   ngOnInit() {
+    this.getMapPointArray();
+  }
+
+  getMapPointArray(): void {
+    this.mapPointService.getMapPointArray()
+        .subscribe(mapPointArray => this.mapPointArray = mapPointArray);
+  }
+
+  editMapPoint(mapPoint : MappointModule){
+    this.mapPointService.editMapPoint(mapPoint);
   }
 
 }

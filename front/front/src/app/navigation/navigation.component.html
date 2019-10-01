@@ -12,9 +12,13 @@
 </mat-toolbar>
 <mat-sidenav-container>
     <mat-sidenav mode="side" #sidenav opened>
-    <mat-nav-list>
-        <a mat-list-item routerLink="." *ngFor="let nav of fillerNav">{{nav}}</a>
-    </mat-nav-list>
+        <mat-nav-list>
+            <a mat-list-item routerLink="." 
+                *ngFor="let point of mapPointArray"
+                (click)="editMapPoint(point)">
+                <span class="badge">{{point.order}}</span> {{point.name}}
+            </a>
+        </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
         <div class="main-content" role="main">
