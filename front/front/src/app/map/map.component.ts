@@ -68,9 +68,9 @@ export class MapComponent implements OnInit, AfterViewInit {
       controls: defaultControls().extend([
         overviewMapControl
       ]),
-      interactions: defaultInteractions().extend([
+      /*interactions: defaultInteractions().extend([
         new DragRotateAndZoom(), this.draw
-      ]),
+      ]),*/
       layers: [this.raster, this.vector],
       view: this.view
     });
@@ -88,7 +88,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     const thisMap = this.map;
     const service =  this.mapPointService;
     this.map.on('click', (evt) => {
-      service.initMapPointDialog(toLonLat(evt.coordinate));
+      service.addMapPoint(toLonLat(evt.coordinate));
     });
   }
 }

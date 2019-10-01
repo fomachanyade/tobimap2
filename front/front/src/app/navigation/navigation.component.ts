@@ -21,4 +21,8 @@ export class NavigationComponent implements OnInit {
         .subscribe(mapPointArray => this.mapPointArray = mapPointArray);
   }
 
+  editMapPoint(mapPoint : MappointModule){
+    this.mapPointService.editMapPoint(mapPoint);
+  }
+
 }
