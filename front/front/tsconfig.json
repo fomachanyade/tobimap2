@@ -17,7 +17,11 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ol": ["node_modules/ol/src"],
+      "ol/*": ["node_modules/ol/src/*"]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

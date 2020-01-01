@@ -9,6 +9,8 @@ import Draw from 'ol/interaction/Draw.js';
 import {defaults as defaultControls, OverviewMap, Control} from 'ol/control.js';
 import {defaults as defaultInteractions, DragRotateAndZoom} from 'ol/interaction.js';
 import { fromLonLat, toLonLat } from 'ol/proj';
+import { Point, LineString} from  'ol/geom';
+import { Style } from 'ol/style';
 
 import { MapPointService } from '../services/mapPointService/map-point.service';
 
@@ -26,6 +28,12 @@ export class MapComponent implements OnInit, AfterViewInit {
   vectorSource: VectorSource;
   view: View;
   draw: Draw;
+  //style of linestring
+  lineStyle : Style =  new Style({
+    strokeColor: "#0500bd",
+    strokeWidth: 15,
+    strokeOpacity: 0.5
+  });
   
   constructor(private mapPointService : MapPointService) { }
 
@@ -90,5 +98,45 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.map.on('click', (evt) => {
       service.addMapPoint(toLonLat(evt.coordinate));
     });
+  }
+
+  drawLine(){
+    if(this.mapPointService.mapPointArray.length === 0){
+      return;
+    }
+    const steps = 50;
+    const time = 2000;
+    const points : Array<Point> = this.mapPointService.mapPointArray.map(point => {
+      return new Point(point.coordinate)
+    });
+    const length = points.length;
+    for(let i = 0; i < length; i++){
+      const startPt = points[i];
+      const endPt = ++i === length ? points[0] : points[++i];
+      this.drawAnimatedLine(startPt, endPt, this.lineStyle, steps, time);   
+    }
+  }
+
+  drawAnimatedLine(startPt, endPt, style, steps, time) {
+    const directionX = (endPt[0] - startPt[0]) / steps;
+    const directionY = (endPt[1] - startPt[1]) / steps;
+    let i = 0;
+    let prevLayer;
+    let ivlDraw = setInterval(() => {
+        if (i > steps) {
+            clearInterval(ivlDraw);     
+            return;
+        }
+        const newEndPt = new Point(startPt[0] + i * directionX, startPt[1] + i * directionY);
+        const line : LineString  = new LineString([startPt, newEndPt]);
+        var fea = new VectorLayer(line, {}, style);
+        let vec : VectorSource = new VectorSource();
+        
+        vec.addFeatures([fea]);
+        this.map.addLayer(vec);
+        if(prevLayer) this.map.removeLayer(prevLayer);
+        prevLayer = vec;
+        i++;
+    }, time / steps);
   }
 }

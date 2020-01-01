@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MapComponent } from '../map/map.component';
 
 @Component({
   selector: 'app-content',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentComponent implements OnInit {
 
+  @ViewChild(MapComponent,{static:false})
+  protected mapComponent: MapComponent;
   constructor() { }
 
   ngOnInit() {
   }
 
+  drawLine() : void {
+    this.mapComponent.drawLine();
+  }
 }
