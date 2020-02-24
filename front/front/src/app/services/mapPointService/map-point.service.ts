@@ -3,6 +3,20 @@ import { Observable, of } from 'rxjs';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
 import Map from 'ol/Map';
+import XYZ from 'ol/source/XYZ';
+import Feature from 'ol/Feature';
+import {Vector as VectorSource} from 'ol/source.js';
+import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
+import View from 'ol/View';
+import Draw from 'ol/interaction/Draw.js';
+import {defaults as defaultControls, OverviewMap, Control} from 'ol/control.js';
+import {defaults as defaultInteractions, DragRotateAndZoom} from 'ol/interaction.js';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Point, LineString} from  'ol/geom';
+import { Style,Icon } from 'ol/style';
+import GeoJSON from 'ol/format/GeoJSON';
+import {transform} from 'ol/proj';
+
 import {MappointModule} from '../../map/modules/mappoint/mappoint.module';
 import {MapPointDialogComponent} from '../../map-point-dialog/map-point-dialog.component';
 
@@ -10,16 +24,18 @@ import {MapPointDialogComponent} from '../../map-point-dialog/map-point-dialog.c
   providedIn: 'root'
 })
 export class MapPointService implements OnInit {
+  private map:Map;
   public mapPointArray : MappointModule[] = [];
   public orderNum = 0;
   selectedMapPoint: MappointModule;
 
   constructor(public dialog: MatDialog,
               public mapPointService : MapPointService) { }
-
+  
   ngOnInit():void {
   }
-
+  getMap():Map{return this.map}
+  setMap(map:Map){this.map = map}
   getMapPointArray():Observable<MappointModule[]>{
     return of(this.mapPointArray);
   }
