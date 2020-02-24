@@ -22,13 +22,15 @@ import { MatToolbarModule} from '@angular/material/toolbar';
 import { MapComponent } from './map/map.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MapPointDialogComponent } from './map-point-dialog/map-point-dialog.component';
+import { ContentComponent } from './content/content.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
     NavigationComponent,
-    MapPointDialogComponent
+    MapPointDialogComponent,
+    ContentComponent
   ],
   imports: [
     BrowserModule,

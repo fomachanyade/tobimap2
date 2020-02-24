@@ -1,0 +1,24 @@
+<div class="main-content" role="main">
+    <mat-toolbar>
+        <mat-toolbar-row>
+            <button mat-icon-button class="header-icon">
+                    <mat-icon aria-hidden="false" aria-label="user icon">star</mat-icon>
+            </button> 
+            <span>
+                <h2>Constellation</h2>          
+            </span>
+            <ul>
+                <li>
+                    <button mat-flat-button color="primary" (click)="drawLine()">星座を書く</button>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <button mat-flat-button color="primary">星座を保存する</button>
+                </li>
+            </ul> 
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <app-map></app-map>
+    <router-outlet></router-outlet>
+</div>
