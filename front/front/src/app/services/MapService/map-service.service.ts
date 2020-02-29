@@ -6,63 +6,55 @@ import Feature from "ol/Feature";
 import { Vector as VectorSource } from "ol/source.js";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
 import View from "ol/View";
-import Draw from "ol/interaction/Draw.js";
 import {
   defaults as defaultControls,
-  OverviewMap,
-  Control
-} from "ol/control.js";
-import {
-  defaults as defaultInteractions,
-  DragRotateAndZoom
-} from "ol/interaction.js";
+  OverviewMap} from "ol/control.js";
 import { fromLonLat, toLonLat } from "ol/proj";
-import { Point, LineString, Circle } from "ol/geom";
-import { Style, Fill, Stroke, Icon, Circle as CircleStyle } from "ol/style";
-import GeoJSON from "ol/format/GeoJSON";
+import { Point, LineString } from "ol/geom";
+import { Style, Fill, Stroke, Circle as CircleStyle } from "ol/style";
 import { transform } from "ol/proj";
 import { MapPointService } from "../mapPointService/map-point.service";
-import { Observable, of } from "rxjs";
+import { Observable, of, Subscription } from "rxjs";
 import { MappointModule } from "src/app/map/modules/mappoint/mappoint.module";
 
 @Injectable({
   providedIn: "root"
 })
-export class MapServiceService {
+export class MapServiceService{
   private map: Map;
   private raster: TileLayer;
   private view: View;
-  private draw: Draw;
   private overviewMapControl: OverviewMap;
   private lineSource: VectorSource;
   private lineLayer: VectorLayer;
   private pointSource: VectorSource;
   private pointLayer: VectorLayer;
-  private lineStyle: Style = new Style({
-    strokeColor: "#0500bd",
-    strokeWidth: 15,
-    strokeOpacity: 0.5
-  });
+
   private pointStyle: Style = new CircleStyle({
     radius: 5,
     fill: new Fill({ color: "#666666" }),
     stroke: new Stroke({ color: "#bada55", width: 1 })
   });
 
-  private mapPointArr: MappointModule[] = [];
-  private mapPointSubscription
+  private mapPointArr: Array<MappointModule>;
 
   constructor(private mapPointService: MapPointService) {}
 
-  ngOnInit() {
-    this.mapPointService.getMapPointArray().subscribe(p => {
-      console.log(p);
-      this.mapPointArr = p;
+  public async getMap(): Promise<Observable<Map>> {
+    return new Promise((resolve) => {
+      this.initMap().then(()=> {
+        this.setOnClickMapEvent();
+      }).then(()=> {
+        resolve(of(this.map));
+      });;
     });
   }
-
+  public setTarget(id: string): void {
+    this.map.setTarget(id);
+  }
   //地図モジュール初期化
   private initMap(): Promise<string> {
+    this.subscribeMapPoint();
     return new Promise((resolve) => {
       this.raster = new TileLayer({
         source: new XYZ({
@@ -107,9 +99,10 @@ export class MapServiceService {
 
     this.lineLayer = new VectorLayer({
       source: this.lineSource,
-      style: feature => {
-        return this.lineStyle;
-      }
+      style: () => {return new Style({
+        fill: new Fill({ color: "black", weight: 4 }),
+        stroke: new Stroke({ color: "black", width: 2 })
+      });}
     });
   }
 
@@ -121,32 +114,27 @@ export class MapServiceService {
 
     this.pointLayer = new VectorLayer({
       source: this.pointSource,
-      style: feature => {
+      style: () => {
         return this.pointStyle;
       }
     });
   }
 
-  public async getMap(): Promise<Observable<Map>> {
-    return new Promise((resolve) => {
-      this.initMap().then(result=> {
-        this.setOnClickMapEvent();
-      }).then(()=> {
-        resolve(of(this.map));
-      });;
-    });
+  private subscribeMapPoint():void{
+    this.mapPointService.getMapPointArray().subscribe(p => {
+      this.mapPointArr = p;
+    })
   }
-  public setTarget(id: string): void {
-    this.map.setTarget(id);
-  }
+
   // クリック時のイベントを設定
   private setOnClickMapEvent(): void {
+    
     const service = this.mapPointService;
     const addFunc = this.addPointToMap.bind(this);
     this.map.on("click", evt => {
       service.addMapPoint(toLonLat(evt.coordinate)).then(
-        result => {
-          addFunc(result.coordinate);
+        () => {
+          addFunc(evt.coordinate);
         },
         reject => {
           console.log(`failed: ${this.setOnClickMapEvent.name} at mapService`);
@@ -158,8 +146,6 @@ export class MapServiceService {
 
   //マップクリック時にマップに座標を加えます
   private addPointToMap(coord: number[]): void {
-    console.log(this.mapPointArr);
-    //this.map.removeLayer(this.pointLayer);
     let featurePoint = new Feature({
       geometry: new Point(coord),
       size: 1,
@@ -169,17 +155,7 @@ export class MapServiceService {
         image: this.pointStyle
       })
     );
-
-    let vectorPoint = new VectorSource({});
-    vectorPoint.addFeature(featurePoint);
-    const pointStyle = this.pointStyle;
-    const vectorPointLayer = new VectorLayer({
-      source: this.pointSource,
-      style: function(feature) {
-        return pointStyle;
-      }
-    });
-    this.map.addLayer(vectorPointLayer); 
+    this.pointSource.addFeature(featurePoint);
   }
 
   public drawLine() {
@@ -195,26 +171,13 @@ export class MapServiceService {
     for (var j = 0; j < length; j++) {
       points[j] = transform(points[j], "EPSG:4326", "EPSG:3857");
     }
+    //線が最後に始点に戻る様に始点を配列末尾に追加
     points.push(points[0]);
-
-    var featureLine = new Feature({
+    const featureLine = new Feature({
       geometry: new LineString(points)
     });
-
-    var vectorLine = new VectorSource({});
-    vectorLine.addFeature(featureLine);
-
-    var vectorLineLayer = new VectorLayer({
-      source: vectorLine,
-      style: new Style({
-        fill: new Fill({ color: "black", weight: 4 }),
-        stroke: new Stroke({ color: "black", width: 2 })
-      })
-    });
-    this.map.addLayer(vectorLineLayer);
-
+    this.lineSource.addFeature(featureLine);
     this.view.setCenter(fromLonLat(center));
-    this.map.changed();
   }
 
   //TODO:エキスポート機能の実装

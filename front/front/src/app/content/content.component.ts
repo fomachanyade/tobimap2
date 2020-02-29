@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MapComponent } from '../map/map.component';
+import { MapServiceService } from '../services/MapService/map-service.service';
 
 @Component({
   selector: 'app-content',
@@ -8,14 +9,17 @@ import { MapComponent } from '../map/map.component';
 })
 export class ContentComponent implements OnInit {
 
-  @ViewChild(MapComponent,{static:false})
-  protected mapComponent: MapComponent;
-  constructor() { }
+  constructor(private mapService:MapServiceService) { }
 
   ngOnInit() {
   }
 
+  //地図上に線を引くメソッド
   drawLine() : void {
-    this.mapComponent.drawLine();
+    this.mapService.drawLine();
+  }
+
+  saveMap() : void {
+    this.mapService.saveMap();
   }
 }

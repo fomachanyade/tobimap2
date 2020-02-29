@@ -1,19 +1,40 @@
-<h1 mat-dialog-title>勤務先の編集</h1>
+<h2 mat-dialog-title>勤務先の編集</h2>
 <div mat-dialog-content>
-  <p>名前を入力してください</p>
-  <mat-form-field>
-    <input matInput matInput placeholder="勤務先名" 
-      [formControl]="nameFormControl"
-      [errorStateMatcher]="matcher" 
-      [(ngModel)]="data.name">
-    <mat-hint>バイト／勤務先名を入力してください</mat-hint>
-    <mat-error *ngIf="nameFormControl.hasError('required')">
+  <form [formGroup]="formGroup">
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="勤務先名"
+        type="text"
+        name="name"
+        formControlName="name"
+        [errorStateMatcher]="matcher"
+        [attr.value]="data.name"
+      />
+      <mat-hint>バイト／勤務先名を入力してください</mat-hint>
+      <mat-error *ngIf="formGroup.get('name').hasError('required')">
         勤務先名は <strong>必須です</strong>
-    </mat-error>
-  </mat-form-field>  
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea
+        rows="5"
+        cols="60"
+        matInput
+        placeholder="詳細"
+        formControlName="description"
+      >
+    {{ data.description }}
+    </textarea
+      >
+      <mat-hint>バイト／勤務先の詳細を記入してください</mat-hint>
+    </mat-form-field>
+  </form>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.name" cdkFocusInitial>OK</button>
-  <button mat-button (click)="deleteMapPoint(data)">削除</button>
+<div mat-dialog-actions class="actionArea">
+  <button mat-button (click)="onNoClick()">キャンセル</button>
+  <button mat-button (click)="onClickOkButton()" cdkFocusInitial>OK</button>
+  <ng-container *ngIf="data.name">
+    <button mat-button (click)="deleteMapPoint(data)">削除</button>
+  </ng-container>
 </div>

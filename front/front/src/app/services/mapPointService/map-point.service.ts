@@ -1,78 +1,74 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-
-import Map from 'ol/Map';
-import XYZ from 'ol/source/XYZ';
-import Feature from 'ol/Feature';
-import {Vector as VectorSource} from 'ol/source.js';
-import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
-import View from 'ol/View';
-import Draw from 'ol/interaction/Draw.js';
-import {defaults as defaultControls, OverviewMap, Control} from 'ol/control.js';
-import {defaults as defaultInteractions, DragRotateAndZoom} from 'ol/interaction.js';
-import { fromLonLat, toLonLat } from 'ol/proj';
-import { Point, LineString} from  'ol/geom';
-import { Style,Icon } from 'ol/style';
-import GeoJSON from 'ol/format/GeoJSON';
-import {transform} from 'ol/proj';
+import {MatDialog} from '@angular/material';
 
 import {MappointModule} from '../../map/modules/mappoint/mappoint.module';
 import {MapPointDialogComponent} from '../../map-point-dialog/map-point-dialog.component';
 
+const dialogWidth:string = '800px';
+const dialogHeight:string = '600px';
 @Injectable({
   providedIn: 'root'
 })
 export class MapPointService implements OnInit {
-  private map:Map;
-  public mapPointArray : MappointModule[] = [];
-  public orderNum = 0;
-  selectedMapPoint: MappointModule;
+  private mapPointArray : MappointModule[] = new Array<MappointModule>();
 
-  constructor(public dialog: MatDialog,
-              public mapPointService : MapPointService) { }
+  constructor(public dialog: MatDialog) { }
+  
   
   ngOnInit():void {
+    this.initMapPointArray();
   }
-  getMap():Map{return this.map}
-  setMap(map:Map){this.map = map}
-  getMapPointArray():Observable<MappointModule[]>{
+
+  //TODO:firebaseから持ってくる
+  private initMapPointArray():Array<MappointModule>{
+    this.mapPointArray;
+    return null;
+  }
+  public getMapPointArray():Observable<MappointModule[]>{
     return of(this.mapPointArray);
   }
   
-  addMapPoint(coord :number[]): void {
-    this.selectedMapPoint  = new MappointModule(this.orderNum, coord);
-    const dialogRef = this.dialog.open(MapPointDialogComponent, {
-      width: '250px',
-      data: this.selectedMapPoint
-    });
+  //地図上の点を追加するメソッドです
+  public addMapPoint(coord :number[]): Promise<MappointModule> {
+    return new Promise((resolve, reject)=>{
+      const nextOrderNum = this.mapPointArray.length + 1;
+      const mapPoint  = new MappointModule(nextOrderNum, coord);
+      const dialogRef = this.dialog.open(MapPointDialogComponent, {
+        width: dialogWidth,
+        height: dialogHeight,
+        data: mapPoint
+      });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if(!result) return;
-      this.selectedMapPoint.name = result;
-      const isAdded = this.mapPointArray.push(this.selectedMapPoint);
-
-      if(isAdded > 0){
-        this.orderNum++;
-      }else{
-        alert('座標の追加に失敗しました');
-      }
+      dialogRef.afterClosed().subscribe(result => {
+        if(!result) return;
+        mapPoint.name = result.name;
+        mapPoint.description = result.description;
+        const isAdded = this.mapPointArray.push(mapPoint);
+        if(isAdded > 0){
+          resolve(mapPoint);
+        }else{
+          alert('座標の追加に失敗しました');
+          reject(mapPoint);
+        }
+      });
     });
   }
 
   editMapPoint(mapPoint : MappointModule): void {
-    this.selectedMapPoint  = mapPoint;
+    //this.selectedMapPoint  = mapPoint;
     const dialogRef = this.dialog.open(MapPointDialogComponent, {
-      width: '250px',
-      data: this.selectedMapPoint
+      width: dialogWidth,
+      height: dialogHeight,
+      data: mapPoint
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if(!result) return;
-      this.selectedMapPoint.name = result;
-      const target = this.mapPointArray.find( p => p.order === this.selectedMapPoint.order);
+      mapPoint = result;
+      const target = this.mapPointArray.find( p => p.order === mapPoint.order);
       if(!target == undefined){
-        target.name = this.selectedMapPoint.name;
+        target.name = mapPoint.name;
       }
     });
   }
@@ -80,6 +76,5 @@ export class MapPointService implements OnInit {
   deleteMapPoint(mapPoint:MappointModule){
     const index = this.mapPointArray.indexOf(mapPoint);
     this.mapPointArray.splice(index, 1);
-    console.log(this.mapPointArray.length);
   }
 }
