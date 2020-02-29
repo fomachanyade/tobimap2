@@ -16,6 +16,8 @@ import { transform } from "ol/proj";
 import { MapPointService } from "../mapPointService/map-point.service";
 import { Observable, of, Subscription } from "rxjs";
 import { MappointModule } from "src/app/map/modules/mappoint/mappoint.module";
+import {toPng} from 'html-to-image';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: "root"
@@ -58,7 +60,8 @@ export class MapServiceService{
     return new Promise((resolve) => {
       this.raster = new TileLayer({
         source: new XYZ({
-          url: "http://tile.osm.org/{z}/{x}/{y}.png"
+          url: "http://tile.osm.org/{z}/{x}/{y}.png",
+          crossOrigin: 'anonymous'
         })
       });
 
@@ -182,7 +185,24 @@ export class MapServiceService{
 
   //TODO:エキスポート機能の実装
   public saveMap(): void {
-    console.log("exported");
+    // export options for html-to-image.
+    // See: https://github.com/bubkoo/html-to-image#options
+    const exportOptions = {
+      filter: function(element) {
+        return element.className ? element.className.indexOf('ol-control') === -1 : true;
+      }
+    };
+    const url = environment.imageName;
+    const map:Map = this.map;
+    map.once('rendercomplete', () => {
+      toPng(map.getTargetElement(), exportOptions)
+        .then((dataURL)=> {
+          let link:HTMLElement = document.getElementById('image-download');
+          link.setAttribute('href',dataURL);
+          link.click();
+        });
+    });
+    this.map.renderSync();
   }
 
   private getCeter(points: Array<number[]>): number[] {

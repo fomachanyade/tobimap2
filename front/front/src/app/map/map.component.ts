@@ -11,7 +11,8 @@ import { MapServiceService } from '../services/MapService/map-service.service';
 })
 export class MapComponent implements OnInit, AfterViewInit {
   private map: Map;
-  private mapId:string = 'map';
+  mapId:string = 'map';
+  imageId:string = 'image-download';
 
   constructor(private mapService:MapServiceService) {}
 

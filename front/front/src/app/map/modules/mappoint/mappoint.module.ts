@@ -15,7 +15,7 @@ export class MappointModule {
   description: string;
   coordinate: number[];
 
-  constructor(order: number, coordinate:number[], name?:string, description?: string) {
+  constructor(order:number, coordinate:number[], name?:string, description?: string) {
     this.order = order;
     this.name = name;
     this.description = description;

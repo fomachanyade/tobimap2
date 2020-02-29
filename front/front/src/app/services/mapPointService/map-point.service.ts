@@ -32,8 +32,8 @@ export class MapPointService implements OnInit {
   //地図上の点を追加するメソッドです
   public addMapPoint(coord :number[]): Promise<MappointModule> {
     return new Promise((resolve, reject)=>{
-      const nextOrderNum = this.mapPointArray.length + 1;
-      const mapPoint  = new MappointModule(nextOrderNum, coord);
+      const nextOrderNum:number = this.mapPointArray.length + 1;
+      const mapPoint:MappointModule  = new MappointModule(nextOrderNum, coord);
       const dialogRef = this.dialog.open(MapPointDialogComponent, {
         width: dialogWidth,
         height: dialogHeight,
@@ -44,7 +44,7 @@ export class MapPointService implements OnInit {
         if(!result) return;
         mapPoint.name = result.name;
         mapPoint.description = result.description;
-        const isAdded = this.mapPointArray.push(mapPoint);
+        const isAdded:number = this.mapPointArray.push(mapPoint);
         if(isAdded > 0){
           resolve(mapPoint);
         }else{
