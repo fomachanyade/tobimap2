@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
 import { MappointModule } from "../../map/modules/mappoint/mappoint.module";
 import { MapPointDialogComponent } from "../../map-point-dialog/map-point-dialog.component";
