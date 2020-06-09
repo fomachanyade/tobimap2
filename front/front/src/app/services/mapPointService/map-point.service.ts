@@ -5,8 +5,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { MappointModule } from "../../map/modules/mappoint/mappoint.module";
 import { MapPointDialogComponent } from "../../map-point-dialog/map-point-dialog.component";
 
-const dialogWidth: string = "800px";
-const dialogHeight: string = "600px";
+const dialogWidth: string = "600px";
+const dialogHeight: string = "400px";
 @Injectable({
   providedIn: "root",
 })

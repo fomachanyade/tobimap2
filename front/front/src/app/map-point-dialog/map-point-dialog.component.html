@@ -31,9 +31,20 @@
   </form>
 </div>
 <div mat-dialog-actions class="actionArea">
-  <button mat-button (click)="onNoClick()">キャンセル</button>
-  <button mat-button (click)="onClickOkButton()" cdkFocusInitial>OK</button>
+  <button mat-raised-button color="accent" (click)="onNoClick()">
+    キャンセル
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onClickOkButton()"
+    cdkFocusInitial
+  >
+    OK
+  </button>
   <ng-container *ngIf="data.name">
-    <button mat-button (click)="deleteMapPoint(data)">削除</button>
+    <button mat-raised-button color="warning" (click)="deleteMapPoint(data)">
+      削除
+    </button>
   </ng-container>
 </div>
