@@ -6,9 +6,7 @@ import Feature from "ol/Feature";
 import { Vector as VectorSource } from "ol/source.js";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
 import View from "ol/View";
-import {
-  defaults as defaultControls,
-  OverviewMap} from "ol/control.js";
+import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Point, LineString } from "ol/geom";
 import { Style, Fill, Stroke, Circle as CircleStyle } from "ol/style";
@@ -16,13 +14,13 @@ import { transform } from "ol/proj";
 import { MapPointService } from "../mapPointService/map-point.service";
 import { Observable, of, Subscription } from "rxjs";
 import { MappointModule } from "src/app/map/modules/mappoint/mappoint.module";
-import {toPng} from 'html-to-image';
-import { environment } from 'src/environments/environment';
+import { toPng } from "html-to-image";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root"
 })
-export class MapServiceService{
+export class MapServiceService {
   private map: Map;
   private raster: TileLayer;
   private view: View;
@@ -43,12 +41,14 @@ export class MapServiceService{
   constructor(private mapPointService: MapPointService) {}
 
   public async getMap(): Promise<Observable<Map>> {
-    return new Promise((resolve) => {
-      this.initMap().then(()=> {
-        this.setOnClickMapEvent();
-      }).then(()=> {
-        resolve(of(this.map));
-      });;
+    return new Promise(resolve => {
+      this.initMap()
+        .then(() => {
+          this.setOnClickMapEvent();
+        })
+        .then(() => {
+          resolve(of(this.map));
+        });
     });
   }
   public setTarget(id: string): void {
@@ -57,11 +57,11 @@ export class MapServiceService{
   //地図モジュール初期化
   private initMap(): Promise<string> {
     this.subscribeMapPoint();
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.raster = new TileLayer({
         source: new XYZ({
           url: "http://tile.osm.org/{z}/{x}/{y}.png",
-          crossOrigin: 'anonymous'
+          crossOrigin: "anonymous"
         })
       });
 
@@ -90,7 +90,7 @@ export class MapServiceService{
         layers: [this.raster, this.lineLayer, this.pointLayer],
         view: this.view
       });
-      resolve('map init');
+      resolve("map init");
     });
   }
 
@@ -102,10 +102,12 @@ export class MapServiceService{
 
     this.lineLayer = new VectorLayer({
       source: this.lineSource,
-      style: () => {return new Style({
-        fill: new Fill({ color: "black", weight: 4 }),
-        stroke: new Stroke({ color: "black", width: 2 })
-      });}
+      style: () => {
+        return new Style({
+          fill: new Fill({ color: "black", weight: 4 }),
+          stroke: new Stroke({ color: "black", width: 2 })
+        });
+      }
     });
   }
 
@@ -123,15 +125,14 @@ export class MapServiceService{
     });
   }
 
-  private subscribeMapPoint():void{
+  private subscribeMapPoint(): void {
     this.mapPointService.getMapPointArray().subscribe(p => {
       this.mapPointArr = p;
-    })
+    });
   }
 
   // クリック時のイベントを設定
   private setOnClickMapEvent(): void {
-    
     const service = this.mapPointService;
     const addFunc = this.addPointToMap.bind(this);
     this.map.on("click", evt => {
@@ -151,7 +152,7 @@ export class MapServiceService{
   private addPointToMap(coord: number[]): void {
     let featurePoint = new Feature({
       geometry: new Point(coord),
-      size: 1,
+      size: 1
     });
     featurePoint.setStyle(
       new Style({
@@ -183,24 +184,24 @@ export class MapServiceService{
     this.view.setCenter(fromLonLat(center));
   }
 
-  //TODO:エキスポート機能の実装
   public saveMap(): void {
     // export options for html-to-image.
     // See: https://github.com/bubkoo/html-to-image#options
     const exportOptions = {
       filter: function(element) {
-        return element.className ? element.className.indexOf('ol-control') === -1 : true;
+        return element.className
+          ? element.className.indexOf("ol-control") === -1
+          : true;
       }
     };
     const url = environment.imageName;
-    const map:Map = this.map;
-    map.once('rendercomplete', () => {
-      toPng(map.getTargetElement(), exportOptions)
-        .then((dataURL)=> {
-          let link:HTMLElement = document.getElementById('image-download');
-          link.setAttribute('href',dataURL);
-          link.click();
-        });
+    const map: Map = this.map;
+    map.once("rendercomplete", () => {
+      toPng(map.getTargetElement(), exportOptions).then(dataURL => {
+        let link: HTMLElement = document.getElementById("image-download");
+        link.setAttribute("href", dataURL);
+        link.click();
+      });
     });
     this.map.renderSync();
   }
