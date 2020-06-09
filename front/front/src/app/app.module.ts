@@ -1,28 +1,32 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
-import { MatButtonModule, 
-          MatCheckboxModule, 
-          MatDatepickerModule, 
-          MatNativeDateModule, 
-          MatInputModule, 
-          MatTabsModule, 
-          MatSidenavModule, 
-          MatIconModule, 
-          MatListModule,
-          MatDialogModule } from '@angular/material';
-import { MatToolbarModule} from '@angular/material/toolbar';
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatInputModule,
+  MatTabsModule,
+  MatSidenavModule,
+  MatIconModule,
+  MatListModule,
+} from "@angular/material";
 
-import { MapComponent } from './map/map.component';
-import { NavigationComponent } from './navigation/navigation.component';
-import { MapPointDialogComponent } from './map-point-dialog/map-point-dialog.component';
-import { ContentComponent } from './content/content.component';
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatDialogModule } from "@angular/material/dialog";
+
+import { MapComponent } from "./map/map.component";
+import { NavigationComponent } from "./navigation/navigation.component";
+import { MapPointDialogComponent } from "./map-point-dialog/map-point-dialog.component";
+import { ContentComponent } from "./content/content.component";
 
 @NgModule({
   declarations: [
@@ -30,7 +34,7 @@ import { ContentComponent } from './content/content.component';
     MapComponent,
     NavigationComponent,
     MapPointDialogComponent,
-    ContentComponent
+    ContentComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,15 +49,16 @@ import { ContentComponent } from './content/content.component';
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
-    MatTabsModule, 
+    MatTabsModule,
     MatSidenavModule,
     MatIconModule,
     MatListModule,
     MatToolbarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatFormFieldModule,
   ],
-  entryComponents:[MapPointDialogComponent],
+  entryComponents: [MapPointDialogComponent],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
