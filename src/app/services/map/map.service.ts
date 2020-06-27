@@ -1,45 +1,61 @@
 import { Injectable } from '@angular/core';
-
-import Map from 'ol/Map';
-import XYZ from 'ol/source/XYZ';
-import Feature from 'ol/Feature';
-import { Vector as VectorSource } from 'ol/source.js';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
-import View from 'ol/View';
-import { defaults as defaultControls, OverviewMap } from 'ol/control.js';
-import { fromLonLat, toLonLat } from 'ol/proj';
-import { Point, LineString } from 'ol/geom';
-import { Style, Fill, Stroke, Circle as CircleStyle, Text } from 'ol/style';
-import { transform } from 'ol/proj';
-import { MapPointService } from '../mapPointService/map-point.service';
-import { Observable, of, Subscription } from 'rxjs';
-import { MappointModule } from 'src/app/map/modules/mappoint/mappoint.module';
 import { toPng } from 'html-to-image';
+import { defaults as defaultControls, OverviewMap } from 'ol/control.js';
+import Feature from 'ol/Feature';
+import { Geometry, Point } from 'ol/geom';
+import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
+import Map from 'ol/Map';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Vector as VectorSource } from 'ol/source.js';
+import XYZ from 'ol/source/XYZ';
+import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
+import View from 'ol/View';
+import { Observable, of } from 'rxjs';
+import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
 import { environment } from 'src/environments/environment';
+import { MapPointService } from '../map-point/map-point.service';
+import { LineLayerHandler } from './line-layer-handler/line-layer-handler';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MapServiceService {
+/**
+ * 座標と星座を描画する地図の生成と操作を担うサービス
+ */
+export class MapService {
+  /**
+   * 地図オブジェクト
+   */
   private map: Map;
-  private raster: TileLayer;
+  /**
+   * ベースの地図を表示するレイヤー
+   */
+  private baseLayer: TileLayer;
+  /**
+   * 見た目を管理するオブジェクト
+   */
   private view: View;
+  /**
+   * 俯瞰図コントロールのオブジェクト
+   */
   private overviewMapControl: OverviewMap;
-  private lineSource: VectorSource;
-  private lineLayer: VectorLayer;
-  private pointSource: VectorSource;
+  private pointSource: VectorSource<Geometry>;
   private pointLayer: VectorLayer;
 
-  private pointStyle: Style = new CircleStyle({
+  private pointStyle: CircleStyle = new CircleStyle({
     radius: 10,
     fill: new Fill({ color: '#666666' }),
     stroke: new Stroke({ color: '#bada55', width: 1 }),
   });
   private textFill = new Fill({ color: 'white' });
 
-  private mapPointArr: Array<MappointModule>;
+  private lineLayerHandler: LineLayerHandler;
 
-  constructor(private mapPointService: MapPointService) {}
+  private mapPointArr: Array<MapPointModule>;
+
+  constructor(private mapPointService: MapPointService) {
+    this.lineLayerHandler = new LineLayerHandler();
+  }
 
   async getMap(): Promise<Observable<Map>> {
     return new Promise((resolve) => {
@@ -62,20 +78,11 @@ export class MapServiceService {
       alert('地図をクリックして勤務先を複数選択してください');
       return;
     }
+    this.lineLayerHandler.drawLineOnLayer(this.mapPointArr);
     const points: Array<number[]> = this.mapPointArr.map((point) => {
       return point.coordinate;
     });
-    const length = points.length;
     const center: number[] = this.getCeter(points);
-    for (let j = 0; j < length; j++) {
-      points[j] = transform(points[j], 'EPSG:4326', 'EPSG:3857');
-    }
-    // 線が最後に始点に戻る様に始点を配列末尾に追加
-    points.push(points[0]);
-    const featureLine = new Feature({
-      geometry: new LineString(points),
-    });
-    this.lineSource.addFeature(featureLine);
     this.view.setCenter(fromLonLat(center));
   }
 
@@ -105,15 +112,16 @@ export class MapServiceService {
   private initMap(): Promise<string> {
     this.subscribeMapPoint();
     return new Promise((resolve) => {
-      this.raster = new TileLayer({
+      this.baseLayer = new TileLayer({
         source: new XYZ({
           url: 'http://tile.osm.org/{z}/{x}/{y}.png',
           crossOrigin: 'anonymous',
         }),
       });
 
-      this.initLineLayers();
       this.initPointLayers();
+
+      const lineLayer = this.lineLayerHandler.getLineLayer();
 
       this.view = new View({
         center: fromLonLat([139.339285, 35.670167]),
@@ -126,7 +134,7 @@ export class MapServiceService {
       this.overviewMapControl = new OverviewMap({
         // see in overviewmap-custom.html to see the custom CSS used
         className: 'ol-overviewmap ol-custom-overviewmap',
-        layers: [this.raster],
+        layers: [this.baseLayer],
         collapseLabel: '\u00BB',
         label: '\u00AB',
         collapsed: true,
@@ -134,33 +142,15 @@ export class MapServiceService {
 
       this.map = new Map({
         controls: defaultControls().extend([this.overviewMapControl]),
-        layers: [this.raster, this.lineLayer, this.pointLayer],
+        layers: [this.baseLayer, lineLayer, this.pointLayer],
         view: this.view,
       });
       resolve('map init');
     });
   }
 
-  private initLineLayers() {
-    this.lineSource = new VectorSource({
-      projection: 'EPSG:4326',
-      wrapX: false,
-    });
-
-    this.lineLayer = new VectorLayer({
-      source: this.lineSource,
-      style: () => {
-        return new Style({
-          fill: new Fill({ color: 'black', weight: 4 }),
-          stroke: new Stroke({ color: 'black', width: 2 }),
-        });
-      },
-    });
-  }
-
   private initPointLayers() {
     this.pointSource = new VectorSource({
-      projection: 'EPSG:4326',
       wrapX: false,
     });
 
@@ -186,7 +176,7 @@ export class MapServiceService {
   private setOnClickMapEvent(): void {
     const service = this.mapPointService;
     const addFunc = this.addPointToMap.bind(this);
-    this.map.on('click', (evt) => {
+    this.map.on('click', (evt: any) => {
       service.addMapPoint(toLonLat(evt.coordinate)).then(
         (point) => {
           addFunc(evt.coordinate, point.order);

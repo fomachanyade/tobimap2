@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 
 import Map from 'ol/Map';
-import { MapPointService } from '../services/mapPointService/map-point.service';
-import { MapServiceService } from '../services/MapService/map-service.service';
+import { MapPointService } from '../services/map-point/map-point.service';
+import { MapService } from '../services/map/map.service';
 
 @Component({
   selector: 'app-map',
@@ -14,7 +14,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   mapId = 'map';
   imageId = 'image-download';
 
-  constructor(private mapService: MapServiceService) {}
+  constructor(private mapService: MapService) {}
 
   ngOnInit() {}
 

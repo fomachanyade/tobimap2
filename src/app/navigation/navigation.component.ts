@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MappointModule } from '../map/modules/mappoint/mappoint.module';
-import { MapPointService } from '../services/mapPointService/map-point.service';
+import { MapPointModule } from '../map/modules/mappoint/mappoint.module';
+import { MapPointService } from '../services/map-point/map-point.service';
 
 @Component({
   selector: 'app-navigation',
@@ -8,7 +8,7 @@ import { MapPointService } from '../services/mapPointService/map-point.service';
   styleUrls: ['./navigation.component.sass'],
 })
 export class NavigationComponent implements OnInit {
-  mapPointArray: MappointModule[];
+  mapPointArray: MapPointModule[];
 
   constructor(private mapPointService: MapPointService) {}
 
@@ -22,7 +22,7 @@ export class NavigationComponent implements OnInit {
       .subscribe((mapPointArray) => (this.mapPointArray = mapPointArray));
   }
 
-  editMapPoint(mapPoint: MappointModule) {
+  editMapPoint(mapPoint: MapPointModule) {
     this.mapPointService.editMapPoint(mapPoint);
   }
 }

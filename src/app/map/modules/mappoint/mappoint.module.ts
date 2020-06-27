@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export class MappointModule {
+export class MapPointModule {
   order: number;
   name: string;
   description: string;

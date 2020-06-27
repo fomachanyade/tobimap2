@@ -2,7 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
-import { MappointModule } from '../../map/modules/mappoint/mappoint.module';
+import { MapPointModule } from '../../map/modules/mappoint/mappoint.module';
 import { MapPointDialogComponent } from '../../map-point-dialog/map-point-dialog.component';
 
 const dialogWidth = '600px';
@@ -11,21 +11,21 @@ const dialogHeight = '400px';
   providedIn: 'root',
 })
 export class MapPointService {
-  private mapPointArray: MappointModule[] = new Array<MappointModule>();
+  private mapPointArray: MapPointModule[] = new Array<MapPointModule>();
 
   constructor(public dialog: MatDialog) {
     this.initMapPointArray();
   }
 
-  getMapPointArray(): Observable<MappointModule[]> {
+  getMapPointArray(): Observable<MapPointModule[]> {
     return of(this.mapPointArray);
   }
 
   // 地図上の点を追加するメソッドです
-  addMapPoint(coord: number[]): Promise<MappointModule> {
+  addMapPoint(coord: number[]): Promise<MapPointModule> {
     return new Promise((resolve, reject) => {
       const nextOrderNum: number = this.mapPointArray.length + 1;
-      const mapPoint: MappointModule = new MappointModule(nextOrderNum, coord);
+      const mapPoint: MapPointModule = new MapPointModule(nextOrderNum, coord);
       const dialogRef = this.dialog.open(MapPointDialogComponent, {
         width: dialogWidth,
         height: dialogHeight,
@@ -48,7 +48,7 @@ export class MapPointService {
     });
   }
 
-  editMapPoint(mapPoint: MappointModule): void {
+  editMapPoint(mapPoint: MapPointModule): void {
     const dialogRef = this.dialog.open(MapPointDialogComponent, {
       width: dialogWidth,
       height: dialogHeight,
@@ -68,13 +68,13 @@ export class MapPointService {
     });
   }
 
-  deleteMapPoint(mapPoint: MappointModule) {
+  deleteMapPoint(mapPoint: MapPointModule) {
     const index = this.mapPointArray.indexOf(mapPoint);
     this.mapPointArray.splice(index, 1);
   }
 
   // TODO:firebaseから持ってくる
-  private initMapPointArray(): Array<MappointModule> {
+  private initMapPointArray(): Array<MapPointModule> {
     return null;
   }
 }
