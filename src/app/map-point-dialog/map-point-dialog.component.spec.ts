@@ -8,9 +8,8 @@ describe('MapPointDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MapPointDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [MapPointDialogComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
