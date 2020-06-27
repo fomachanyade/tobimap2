@@ -22,6 +22,18 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Further help
+## 地図周り
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- openlayers で作った
+
+## UI
+
+- angular material に頼った。
+- 超感謝
+  - https://note.com/3832/n/nda0b10d91a34
+
+## デプロイ
+
+- ほぼここに書いてある
+  - https://qiita.com/rubytomato@github/items/b83caa01fc9c4993f526
+- publish は`dist/front`
