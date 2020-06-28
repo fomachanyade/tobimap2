@@ -1,20 +1,17 @@
 import { Injectable } from '@angular/core';
 import { toPng } from 'html-to-image';
 import { defaults as defaultControls, OverviewMap } from 'ol/control.js';
-import Feature from 'ol/Feature';
-import { Geometry, Point } from 'ol/geom';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
+import { Tile as TileLayer } from 'ol/layer.js';
 import Map from 'ol/Map';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { Vector as VectorSource } from 'ol/source.js';
 import XYZ from 'ol/source/XYZ';
-import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import View from 'ol/View';
 import { Observable, of } from 'rxjs';
 import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
 import { environment } from 'src/environments/environment';
 import { MapPointService } from '../map-point/map-point.service';
 import { LineLayerHandler } from './line-layer-handler/line-layer-handler';
+import { PointLayerHandler } from './point-layer-handler/point-layer-handler';
 
 @Injectable({
   providedIn: 'root',
@@ -39,38 +36,23 @@ export class MapService {
    * 俯瞰図コントロールのオブジェクト
    */
   private overviewMapControl: OverviewMap;
-  private pointSource: VectorSource<Geometry>;
-  private pointLayer: VectorLayer;
 
-  private pointStyle: CircleStyle = new CircleStyle({
-    radius: 10,
-    fill: new Fill({ color: '#666666' }),
-    stroke: new Stroke({ color: '#bada55', width: 1 }),
-  });
-  private textFill = new Fill({ color: 'white' });
-
+  private pointLayerHandler: PointLayerHandler;
   private lineLayerHandler: LineLayerHandler;
 
   private mapPointArr: Array<MapPointModule>;
 
   constructor(private mapPointService: MapPointService) {
+    this.pointLayerHandler = new PointLayerHandler();
     this.lineLayerHandler = new LineLayerHandler();
   }
 
   async getMap(): Promise<Observable<Map>> {
     return new Promise((resolve) => {
-      this.initMap()
-        .then(() => {
-          this.setOnClickMapEvent();
-        })
-        .then(() => {
-          resolve(of(this.map));
-        });
+      this.initMap().then(() => {
+        resolve(of(this.map));
+      });
     });
-  }
-
-  setTarget(id: string): void {
-    this.map.setTarget(id);
   }
 
   drawLine() {
@@ -88,7 +70,7 @@ export class MapService {
 
   saveMap(): void {
     // export options for html-to-image.
-    // See: https://github.com/bubkoo/html-to-image#options
+    // See: https://github.com/bubkool/html-to-image#options
     const exportOptions = {
       filter: (element) => {
         return element.className
@@ -119,8 +101,7 @@ export class MapService {
         }),
       });
 
-      this.initPointLayers();
-
+      const pointLayer = this.pointLayerHandler.getPointLayer();
       const lineLayer = this.lineLayerHandler.getLineLayer();
 
       this.view = new View({
@@ -142,27 +123,10 @@ export class MapService {
 
       this.map = new Map({
         controls: defaultControls().extend([this.overviewMapControl]),
-        layers: [this.baseLayer, lineLayer, this.pointLayer],
+        layers: [this.baseLayer, lineLayer, pointLayer],
         view: this.view,
       });
       resolve('map init');
-    });
-  }
-
-  private initPointLayers() {
-    this.pointSource = new VectorSource({
-      wrapX: false,
-    });
-
-    this.pointLayer = new VectorLayer({
-      source: this.pointSource,
-      style: (feature) => {
-        console.log(feature.get('order'));
-        return new Style({
-          image: this.pointStyle,
-          text: new Text({ text: feature.get('order'), fill: this.textFill }),
-        });
-      },
     });
   }
 
@@ -172,31 +136,9 @@ export class MapService {
     });
   }
 
-  // クリック時のイベントを設定
-  private setOnClickMapEvent(): void {
-    const service = this.mapPointService;
-    const addFunc = this.addPointToMap.bind(this);
-    this.map.on('click', (evt: any) => {
-      service.addMapPoint(toLonLat(evt.coordinate)).then(
-        (point) => {
-          addFunc(evt.coordinate, point.order);
-        },
-        (reject) => {
-          console.log(`failed: ${this.setOnClickMapEvent.name} at mapService`);
-          console.log(reject);
-        }
-      );
-    });
-  }
-
   // マップクリック時にマップに座標を加えます
-  private addPointToMap(coord: number[], order: number): void {
-    const featurePoint = new Feature({
-      geometry: new Point(coord),
-      size: 5,
-    });
-    featurePoint.set('order', order.toString());
-    this.pointSource.addFeature(featurePoint);
+  addPointToMap(coord: number[], order: number): void {
+    this.pointLayerHandler.drawPointOnLayer(coord, order);
   }
 
   private getCeter(points: Array<number[]>): number[] {

@@ -1,19 +1,15 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
 
 import { MapPointModule } from '../../map/modules/mappoint/mappoint.module';
-import { MapPointDialogComponent } from '../../map-point-dialog/map-point-dialog.component';
 
-const dialogWidth = '600px';
-const dialogHeight = '400px';
 @Injectable({
   providedIn: 'root',
 })
 export class MapPointService {
   private mapPointArray: MapPointModule[] = new Array<MapPointModule>();
 
-  constructor(public dialog: MatDialog) {
+  constructor() {
     this.initMapPointArray();
   }
 
@@ -22,50 +18,30 @@ export class MapPointService {
   }
 
   // 地図上の点を追加するメソッドです
-  addMapPoint(coord: number[]): Promise<MapPointModule> {
-    return new Promise((resolve, reject) => {
-      const nextOrderNum: number = this.mapPointArray.length + 1;
-      const mapPoint: MapPointModule = new MapPointModule(nextOrderNum, coord);
-      const dialogRef = this.dialog.open(MapPointDialogComponent, {
-        width: dialogWidth,
-        height: dialogHeight,
-        data: mapPoint,
-      });
+  addMapPoint(name: string, coord: number[], description: string): number {
+    // TODO: 処理が重複しているので修正
+    const mapPoint = this.getNextMapPoint(coord);
+    mapPoint.name = name;
+    mapPoint.description = description;
+    this.mapPointArray.push(mapPoint);
+    return mapPoint.order;
+  }
 
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          mapPoint.name = result.name;
-          mapPoint.description = result.description;
-          const isAdded: number = this.mapPointArray.push(mapPoint);
-          if (isAdded > 0) {
-            resolve(mapPoint);
-          } else {
-            alert('座標の追加に失敗しました');
-            reject(mapPoint);
-          }
-        }
-      });
-    });
+  /**
+   * 座標追加モーダルを開く時に、モーダルに表示するためのデータを返却する
+   * @param coord 座標情報
+   */
+  getNextMapPoint(coord: number[]): MapPointModule {
+    const nextOrderNum: number = this.mapPointArray.length + 1;
+    return new MapPointModule(nextOrderNum, coord);
   }
 
   editMapPoint(mapPoint: MapPointModule): void {
-    const dialogRef = this.dialog.open(MapPointDialogComponent, {
-      width: dialogWidth,
-      height: dialogHeight,
-      data: mapPoint,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        mapPoint = result;
-        const target = this.mapPointArray.find(
-          (p) => p.order === mapPoint.order
-        );
-        if (target) {
-          target.name = mapPoint.name;
-        }
-      }
-    });
+    const target = this.mapPointArray.find((p) => p.order === mapPoint.order);
+    if (target) {
+      target.name = mapPoint.name;
+      target.description = mapPoint.description;
+    }
   }
 
   deleteMapPoint(mapPoint: MapPointModule) {

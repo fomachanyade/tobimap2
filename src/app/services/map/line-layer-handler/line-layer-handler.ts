@@ -1,8 +1,8 @@
+import { Feature } from 'ol';
 import { LineString } from 'ol/geom';
 import { Vector as VectorLayer } from 'ol/layer.js';
 import { transform } from 'ol/proj';
-import { Vector as VectorSource } from 'ol/source.js';
-import { Feature } from 'ol/src';
+import { Vector as VectorSource } from 'ol/source';
 import { Stroke, Style } from 'ol/style';
 import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
 
@@ -17,7 +17,7 @@ export class LineLayerHandler {
   /**
    * 星座の線を引く座標のソース
    */
-  private source: VectorSource<LineString>;
+  private source: VectorSource;
   /**
    * 星座の線のスタイル
    */
@@ -54,7 +54,7 @@ export class LineLayerHandler {
     });
     // 線が最後に始点に戻る様に始点を配列末尾に追加
     coords.push(coords[0]);
-    const featureLine = new Feature<LineString>({
+    const featureLine = new Feature({
       geometry: new LineString(coords),
     });
     this.source.addFeature(featureLine);
