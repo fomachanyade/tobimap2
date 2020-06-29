@@ -12,12 +12,19 @@
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav mode="side" #sidenav opened>
-    <mat-nav-list>
+    <mat-nav-list
+      cdkDropList
+      #mapPointList="cdkDropList"
+      [cdkDropListData]="mapPoints"
+      (cdkDropListDropped)="replaceMapPointList($event)"
+    >
       <a
         mat-list-item
         routerLink="."
         *ngFor="let point of mapPoints"
+        [cdkDragData]="point"
         (click)="openMapPointModal(point)"
+        cdkDrag
       >
         <span class="badge">{{ point.order }}</span> {{ point.name }}
       </a>

@@ -88,7 +88,7 @@ export class MapService implements OnDestroy {
    * 座標を地図に再描画
    * 座標削除時に呼び出される
    */
-  reDrawPointsonMap(): void {
+  reDrawPointsOnMap(): void {
     // 処理をハンドラーに委譲
     this.pointLayerHandler.drawMultiplePointsOnLayer(this.mapPoints);
   }

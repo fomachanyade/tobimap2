@@ -51,7 +51,7 @@ export class MapPointService {
    * @param mapPoint 座標情報
    * @returns 更新成否
    */
-  editMapPoint(mapPoint: MapPoint): boolean {
+  editMapPointInfo(mapPoint: MapPoint): boolean {
     const target = this.mapPoints.find((p) => p.order === mapPoint.order);
     if (target) {
       target.name = mapPoint.name;
@@ -64,6 +64,16 @@ export class MapPointService {
   }
 
   /**
+   * 入れ替えられた順序に従って、座標情報の順番を更新
+   * @param replacedMapPoints 順序の入れ替わった座標の配列
+   */
+  updateMapPointOrder(replacedMapPoints: MapPoint[]): boolean {
+    this.mapPoints = replacedMapPoints.map(this.resetOrder);
+    this.mapPointSubject.next(this.mapPoints);
+    return true;
+  }
+
+  /**
    * 指定の座標情報を削除
    * @param mapPoint 座標情報
    * @return
@@ -72,7 +82,7 @@ export class MapPointService {
     const index = this.mapPoints.indexOf(mapPoint);
     if (index >= 0) {
       this.mapPoints.splice(index, 1);
-      this.mapPoints = this.mapPoints.map(this.resetOrder.bind(this));
+      this.mapPoints = this.mapPoints.map(this.resetOrder);
       this.mapPointSubject.next(this.mapPoints);
       return true;
     } else {

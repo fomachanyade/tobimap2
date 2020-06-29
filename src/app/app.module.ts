@@ -21,6 +21,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 import { MapComponent } from './map/map.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MapPointDialogComponent } from './map-point-dialog/map-point-dialog.component';
@@ -54,6 +56,7 @@ import { ContentComponent } from './content/content.component';
     MatToolbarModule,
     MatDialogModule,
     MatFormFieldModule,
+    DragDropModule,
   ],
   entryComponents: [MapPointDialogComponent],
   providers: [],

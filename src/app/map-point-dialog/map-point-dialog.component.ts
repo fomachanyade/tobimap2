@@ -66,7 +66,7 @@ export class MapPointDialogComponent implements OnInit {
   onClickDeleteButton(): void {
     const hasDeleted = this.mapPointService.deleteMapPoint(this.data);
     if (hasDeleted) {
-      this.mapService.reDrawPointsonMap();
+      this.mapService.reDrawPointsOnMap();
       this.dialogRef.close();
     }
   }
