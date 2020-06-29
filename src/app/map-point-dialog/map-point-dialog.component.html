@@ -31,7 +31,7 @@
   </form>
 </div>
 <div mat-dialog-actions class="actionArea">
-  <button mat-raised-button color="accent" (click)="onNoClick()">
+  <button mat-raised-button color="accent" (click)="onClickCancelButton()">
     キャンセル
   </button>
   <button
@@ -43,7 +43,7 @@
     OK
   </button>
   <ng-container *ngIf="data.name">
-    <button mat-raised-button color="warning" (click)="deleteMapPoint(data)">
+    <button mat-raised-button color="warning" (click)="onClickDeleteButton()">
       削除
     </button>
   </ng-container>

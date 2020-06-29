@@ -10,8 +10,17 @@ import { MyErrorStateMatcher } from './my-error-state-matcher/my-error-state-mat
   templateUrl: './map-point-dialog.component.html',
   styleUrls: ['./map-point-dialog.component.sass'],
 })
+/**
+ * 座標追加・編集モーダル
+ */
 export class MapPointDialogComponent implements OnInit {
+  /**
+   * フォーム管理オブジェクト
+   */
   formGroup: FormGroup;
+  /**
+   * バリデーションハンドラー
+   */
   matcher = new MyErrorStateMatcher();
 
   constructor(
@@ -28,17 +37,32 @@ export class MapPointDialogComponent implements OnInit {
     });
   }
 
-  onNoClick(): void {
+  /**
+   * OKボタン押下時に、呼び出し元にデータを渡しモーダルを閉じる関数
+   * TODO: ボタン押下時にエラーを表示
+   */
+  onClickOkButton() {
+    if (this.formGroup.valid) {
+      const val = this.formGroup.getRawValue();
+      this.data.name = val.name;
+      this.data.description = val.description;
+      this.dialogRef.close(this.data);
+    }
+  }
+
+  /**
+   * キャンセルボタン押下時にモーダルを閉じる関数
+   */
+  onClickCancelButton(): void {
     this.dialogRef.close();
   }
 
-  deleteMapPoint(mapPoint: MapPoint): void {
-    this.mapPointService.deleteMapPoint(mapPoint);
-  }
-  onClickOkButton() {
-    const val = this.formGroup.getRawValue();
-    this.data.name = val.name;
-    this.data.description = val.description;
-    this.dialogRef.close(this.data);
+  /**
+   * 削除ボタン押下時にデータを削除し、モーダルを閉じる関数
+   * TODO:削除後にアラート表示
+   */
+  onClickDeleteButton(): void {
+    this.mapPointService.deleteMapPoint(this.data);
+    this.dialogRef.close();
   }
 }

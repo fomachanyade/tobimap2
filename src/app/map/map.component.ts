@@ -68,7 +68,7 @@ export class MapComponent implements AfterViewInit {
 
         if (order >= 0) {
           // 地図に座標を描画
-          this.mapService.addPointToMap(coord, order);
+          this.mapService.addPointToMap(result);
         } else {
           alert(MSG_ADD_MAP_POINT_FAIL);
         }

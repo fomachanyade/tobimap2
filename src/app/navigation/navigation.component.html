@@ -16,7 +16,7 @@
       <a
         mat-list-item
         routerLink="."
-        *ngFor="let point of mapPointArray"
+        *ngFor="let point of mapPoints"
         (click)="openMapPointModal(point)"
       >
         <span class="badge">{{ point.order }}</span> {{ point.name }}
