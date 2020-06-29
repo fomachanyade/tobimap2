@@ -1,25 +1,26 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { toPng } from 'html-to-image';
 import { defaults as defaultControls, OverviewMap } from 'ol/control.js';
 import { Tile as TileLayer } from 'ol/layer.js';
 import Map from 'ol/Map';
 import XYZ from 'ol/source/XYZ';
-import View from 'ol/View';
-import { Observable, of } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
-import { environment } from 'src/environments/environment';
 import { MapPointService } from '../map-point/map-point.service';
 import { LineLayerHandler } from './line-layer-handler/line-layer-handler';
 import { OlViewHandler } from './ol-view-handler/ol-view-handler';
 import { PointLayerHandler } from './point-layer-handler/point-layer-handler';
 
+const MSG_INVALID_POINTS_LENGTH =
+  '地図をクリックして勤務先を複数選択してください';
+const IMAGE_DOWNLOAD_ANCHOR_ELEMENT_ID = 'image-download';
 @Injectable({
   providedIn: 'root',
 })
 /**
  * 座標と星座を描画する地図の生成と操作を担うサービス
  */
-export class MapService {
+export class MapService implements OnDestroy {
   /**
    * 地図オブジェクト
    */
@@ -29,48 +30,78 @@ export class MapService {
    */
   private baseLayer: TileLayer;
   /**
-   * 見た目を管理するオブジェクト
-   */
-  private view: View;
-  /**
    * 俯瞰図コントロールのオブジェクト
    */
   private overviewMapControl: OverviewMap;
 
-  private pointLayerHandler: PointLayerHandler;
-  private lineLayerHandler: LineLayerHandler;
+  /**
+   * 地図の表示形式を管理するハンドラー
+   */
   private viewHandler: OlViewHandler;
-  private mapPointArr: Array<MapPointModule>;
+
+  /**
+   * 星座の座標のレイヤーの、描画と操作を管理するハンドラー
+   */
+  private pointLayerHandler: PointLayerHandler;
+  /**
+   * 星座の線のレイヤーの、描画と操作を管理するハンドラー
+   */
+  private lineLayerHandler: LineLayerHandler;
+  /**
+   * 座標情報の配列
+   */
+  private mapPoints: Array<MapPointModule>;
+
+  /**
+   * 座標情報の配列の購読
+   */
+  private subscription: Subscription;
 
   constructor(private mapPointService: MapPointService) {
     this.pointLayerHandler = new PointLayerHandler();
     this.lineLayerHandler = new LineLayerHandler();
     this.viewHandler = new OlViewHandler();
-    this.subscribeMapPoint();
+    this.subscription = this.subscribeMapPoint();
   }
 
-  async getMap(): Promise<Observable<Map>> {
+  /**
+   * 座標と星座を描画する地図オブジェクトを返却
+   */
+  async getMap(): Promise<Map> {
     return new Promise((resolve) => {
       this.initMap().then(() => {
-        resolve(of(this.map));
+        resolve(this.map);
       });
     });
   }
 
-  // マップクリック時にマップに座標を加えます
+  /**
+   * マップクリック時にマップに座標を追加
+   * @param coord 座標
+   * @param order 順番
+   */
   addPointToMap(coord: number[], order: number): void {
+    // 処理をハンドラーに委譲
     this.pointLayerHandler.drawPointOnLayer(coord, order);
   }
 
+  /**
+   * 座標を繋ぐ線を地図に描画
+   */
   drawLine() {
-    if (this.mapPointArr.length < 1) {
-      alert('地図をクリックして勤務先を複数選択してください');
+    if (this.mapPoints.length < 1) {
+      alert(MSG_INVALID_POINTS_LENGTH);
       return;
     }
-    this.lineLayerHandler.drawLineOnLayer(this.mapPointArr);
-    this.viewHandler.setCenterOfPoints(this.mapPointArr);
+    // 処理をハンドラーに委譲
+    this.lineLayerHandler.drawLineOnLayer(this.mapPoints);
+    // 地図の中心を引いた線に合わせる
+    this.viewHandler.setCenterOfPoints(this.mapPoints);
   }
 
+  /**
+   * 地図を画像に保存
+   */
   saveMap(): void {
     // export options for html-to-image.
     // See: https://github.com/bubkool/html-to-image#options
@@ -81,11 +112,13 @@ export class MapService {
           : true;
       },
     };
-    const url = environment.imageName;
+    // cotext固定のため定数に宣言
     const map: Map = this.map;
     map.once('rendercomplete', () => {
       toPng(map.getTargetElement(), exportOptions).then((dataURL) => {
-        const link: HTMLElement = document.getElementById('image-download');
+        const link: HTMLElement = document.getElementById(
+          IMAGE_DOWNLOAD_ANCHOR_ELEMENT_ID
+        );
         link.setAttribute('href', dataURL);
         link.click();
       });
@@ -93,9 +126,11 @@ export class MapService {
     this.map.renderSync();
   }
 
-  // 地図モジュール初期化
-  private initMap(): Promise<string> {
-    return new Promise((resolve) => {
+  /**
+   * 地図オブジェクトとプロパティーの初期化
+   */
+  private initMap(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       this.baseLayer = new TileLayer({
         source: new XYZ({
           url: 'http://tile.osm.org/{z}/{x}/{y}.png',
@@ -105,7 +140,6 @@ export class MapService {
 
       const pointLayer = this.pointLayerHandler.getPointLayer();
       const lineLayer = this.lineLayerHandler.getLineLayer();
-
       const view = this.viewHandler.getView();
 
       // init overview control compoenent
@@ -123,13 +157,20 @@ export class MapService {
         layers: [this.baseLayer, lineLayer, pointLayer],
         view: view,
       });
-      resolve('map init');
+      resolve(true);
     });
   }
 
-  private subscribeMapPoint(): void {
-    this.mapPointService.getMapPointArray().subscribe((p) => {
-      this.mapPointArr = p;
+  /**
+   * 座標の配列の購読を初期化
+   */
+  private subscribeMapPoint(): Subscription {
+    return this.mapPointService.getMapPointArray().subscribe((points) => {
+      this.mapPoints = points;
     });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) this.subscription.unsubscribe();
   }
 }

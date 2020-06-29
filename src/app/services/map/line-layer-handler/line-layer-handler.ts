@@ -45,6 +45,7 @@ export class LineLayerHandler {
   /**
    * 保持しているレイヤーに線を描画
    * TODO: Promise化、エラーハンドリング
+   * TODO: すでに追加されている線の削除
    * @param points 座標情報の配列
    * @returns 線オブジェクトの範囲
    */

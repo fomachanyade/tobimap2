@@ -28,10 +28,8 @@ export class MapComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.mapService
       .getMap()
-      .then((result) => {
-        result.subscribe((m) => {
-          this.map = m;
-        });
+      .then((map) => {
+        this.map = map;
       })
       .then(() => {
         // set target relement in afterViewInit for rendering proper]y
