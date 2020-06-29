@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MapPoint } from 'src/app/models/map-point/map-point';
 
 @Injectable({
@@ -13,8 +13,9 @@ export class MapPointService {
    * 座標情報の配列
    */
   private mapPoints: MapPoint[] = [];
-
+  private mapPointSubject: Subject<MapPoint[]>;
   constructor() {
+    this.mapPointSubject = new Subject<MapPoint[]>();
     this.initMapPointArray();
   }
 
@@ -22,7 +23,7 @@ export class MapPointService {
    * 座標情報の配列の購読を返却
    */
   getMapPointArray(): Observable<MapPoint[]> {
-    return of(this.mapPoints);
+    return this.mapPointSubject.asObservable();
   }
 
   /**
@@ -40,7 +41,9 @@ export class MapPointService {
    * @returns 追加後の配列の長さ
    */
   addMapPoint(mapPoint: MapPoint): number {
-    return this.mapPoints.push(mapPoint);
+    const addedLength = this.mapPoints.push(mapPoint);
+    this.mapPointSubject.next(this.mapPoints);
+    return addedLength;
   }
 
   /**
@@ -53,6 +56,7 @@ export class MapPointService {
     if (target) {
       target.name = mapPoint.name;
       target.description = mapPoint.description;
+      this.mapPointSubject.next(this.mapPoints);
       return true;
     } else {
       return false;
@@ -68,9 +72,18 @@ export class MapPointService {
     const index = this.mapPoints.indexOf(mapPoint);
     if (index >= 0) {
       this.mapPoints.splice(index, 1);
+      this.mapPoints = this.mapPoints.map(this.resetOrder.bind(this));
+      this.mapPointSubject.next(this.mapPoints);
+      return true;
     } else {
       return false;
     }
+  }
+
+  private resetOrder(mapPoint: MapPoint, index: number): MapPoint {
+    const newOrderNumber = index + 1;
+    mapPoint.order = newOrderNumber;
+    return mapPoint;
   }
 
   /**

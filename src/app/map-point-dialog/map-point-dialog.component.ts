@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MapPoint } from 'src/app/models/map-point/map-point';
 import { MapPointService } from '../services/map-point/map-point.service';
 import { MyErrorStateMatcher } from './my-error-state-matcher/my-error-state-matcher';
+import { MapService } from '../services/map/map.service';
 
 @Component({
   selector: 'app-map-point-dialog',
@@ -27,7 +28,8 @@ export class MapPointDialogComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<MapPointDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MapPoint,
-    private mapPointService: MapPointService
+    private mapPointService: MapPointService,
+    private mapService: MapService
   ) {}
 
   ngOnInit() {
@@ -62,7 +64,10 @@ export class MapPointDialogComponent implements OnInit {
    * TODO:削除後にアラート表示
    */
   onClickDeleteButton(): void {
-    this.mapPointService.deleteMapPoint(this.data);
-    this.dialogRef.close();
+    const hasDeleted = this.mapPointService.deleteMapPoint(this.data);
+    if (hasDeleted) {
+      this.mapService.reDrawPointsonMap();
+      this.dialogRef.close();
+    }
   }
 }

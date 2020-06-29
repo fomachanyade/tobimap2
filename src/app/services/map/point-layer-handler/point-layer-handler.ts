@@ -10,6 +10,7 @@ import { MapPoint } from 'src/app/models/map-point/map-point';
  * 座標Featureの順序プロパティの名前
  */
 const POINT_ORDER_PROPERTY_NAME = 'order';
+const POINT_FEATURE_SIZE = 5;
 const POINT_STYLE_FILL_COLOR = 'rgba(64, 80, 97, 0.8)';
 const POINT_STYLE_STROKE_COLOR = 'rgba(64, 80, 97, 1)';
 const POINT_STYLE_STROKE_WIDTH = 0.5;
@@ -75,14 +76,20 @@ export class PointLayerHandler {
    * 保持しているレイヤーに座標の点を描画
    * @param mapPoint 座標情報
    */
-  drawPointOnLayer(mapPoint: MapPoint): void {
+  drawSinglePointOnLayer(mapPoint: MapPoint): void {
     // TODO: 定数を別ファイルから参照
-    const featurePoint = new Feature({
-      geometry: new Point(mapPoint.coordinate),
-      size: 5,
-    }) as any;
-    featurePoint.set(POINT_ORDER_PROPERTY_NAME, mapPoint.order.toString());
-    this.source.addFeature(featurePoint);
+    const feature = this.getPointFeature(mapPoint);
+    this.source.addFeature(feature);
+  }
+
+  /**
+   * 複数の座標を地図に描画
+   * @param mapPoints
+   */
+  drawMultiplePointsOnLayer(mapPoints: MapPoint[]): void {
+    this.source.clear();
+    const features = mapPoints.map(this.getPointFeature.bind(this));
+    this.source.addFeatures(features);
   }
 
   /**
@@ -133,5 +140,14 @@ export class PointLayerHandler {
     const orderStr = f.get(POINT_ORDER_PROPERTY_NAME) as string;
     this.textStyle.setText(orderStr);
     return this.style;
+  }
+
+  private getPointFeature(mapPoint: MapPoint): Feature {
+    const feature = new Feature({
+      geometry: new Point(mapPoint.coordinate),
+      size: POINT_FEATURE_SIZE,
+    });
+    feature.set(POINT_ORDER_PROPERTY_NAME, mapPoint.order.toString());
+    return feature;
   }
 }

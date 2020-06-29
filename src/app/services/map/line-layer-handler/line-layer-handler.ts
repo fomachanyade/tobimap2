@@ -1,7 +1,6 @@
 import { Feature } from 'ol';
 import { LineString } from 'ol/geom';
 import { Vector as VectorLayer } from 'ol/layer.js';
-import { transform } from 'ol/proj';
 import { Vector as VectorSource } from 'ol/source';
 import { Stroke, Style } from 'ol/style';
 import { MapPoint } from 'src/app/models/map-point/map-point';
@@ -50,6 +49,7 @@ export class LineLayerHandler {
    * @returns 線オブジェクトの範囲
    */
   drawLineOnLayer(points: MapPoint[]): number[] {
+    this.source.clear();
     const coords: number[][] = points.map((point) => {
       return point.coordinate;
     });
