@@ -45,6 +45,7 @@ export class MapService {
   constructor(private mapPointService: MapPointService) {
     this.pointLayerHandler = new PointLayerHandler();
     this.lineLayerHandler = new LineLayerHandler();
+    this.subscribeMapPoint();
   }
 
   async getMap(): Promise<Observable<Map>> {
@@ -92,7 +93,6 @@ export class MapService {
 
   // 地図モジュール初期化
   private initMap(): Promise<string> {
-    this.subscribeMapPoint();
     return new Promise((resolve) => {
       this.baseLayer = new TileLayer({
         source: new XYZ({

@@ -43,8 +43,7 @@ export class MapComponent implements AfterViewInit {
 
   private setOnClickMapEvent() {
     this.map.on('click', (evt: any) => {
-      const coord = toLonLat(evt.coordinate);
-      this.openMapPointModal(coord);
+      this.openMapPointModal(evt.coordinate);
     });
   }
 

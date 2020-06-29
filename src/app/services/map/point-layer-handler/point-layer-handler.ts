@@ -112,7 +112,7 @@ export class PointLayerHandler {
    * 地図描画時に呼び出されるFeature毎のstyleを返却する関数
    */
   private styleFuction(f: Feature): Style {
-    const orderStr = f.get(POINT_ORDER_PROPERTY_NAME) as string;
+    const orderStr = f.get('order') as string;
     this.textStyle.setText(orderStr);
     return this.style;
   }
