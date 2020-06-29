@@ -6,6 +6,8 @@ import { Vector as VectorSource } from 'ol/source';
 import { Stroke, Style } from 'ol/style';
 import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
 
+const LINE_STYLE_STROKE_COLOR = 'rgba(64, 80, 97, 1)';
+const LINE_STYLE_STROKE_WIDTH = 2;
 /**
  * 星座の線のレイヤーの、描画と操作を管理するハンドラー
  */
@@ -50,7 +52,8 @@ export class LineLayerHandler {
     // TODO: この儀式の根拠を調べる
     const coords: number[][] = points.map((point) => {
       // TODO: 定数を別ファイルから参照
-      return transform(point.coordinate, 'EPSG:4326', 'EPSG:3857');
+      // return transform(point.coordinate, 'EPSG:4326', 'EPSG:3857');
+      return point.coordinate;
     });
     // 線が最後に始点に戻る様に始点を配列末尾に追加
     coords.push(coords[0]);
@@ -69,7 +72,10 @@ export class LineLayerHandler {
     this.source = new VectorSource({
       wrapX: false,
     });
-    this.stroke = new Stroke({ color: 'black', width: 2 });
+    this.stroke = new Stroke({
+      color: LINE_STYLE_STROKE_COLOR,
+      width: LINE_STYLE_STROKE_WIDTH,
+    });
     this.style = new Style({
       stroke: this.stroke,
     });

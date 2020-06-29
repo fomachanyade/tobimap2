@@ -63,7 +63,7 @@ export class MapService {
     }
     this.lineLayerHandler.drawLineOnLayer(this.mapPointArr);
     const points: Array<number[]> = this.mapPointArr.map((point) => {
-      return point.coordinate;
+      return toLonLat(point.coordinate);
     });
     const center: number[] = this.getCeter(points);
     this.view.setCenter(fromLonLat(center));

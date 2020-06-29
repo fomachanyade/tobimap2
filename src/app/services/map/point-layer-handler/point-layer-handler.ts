@@ -9,6 +9,12 @@ import CircleStyle from 'ol/style/Circle';
  * 座標Featureの順序プロパティの名前
  */
 const POINT_ORDER_PROPERTY_NAME = 'order';
+const POINT_STYLE_FILL_COLOR = 'rgba(64, 80, 97, 0.8)';
+const POINT_STYLE_STROKE_COLOR = 'rgba(64, 80, 97, 1)';
+const POINT_STYLE_STROKE_WIDTH = 0.5;
+const POINT_STYLE_RADIUS = 10;
+const POINT_STYLE_TEXT_COLOR = 'rgba(255, 255, 255, 1)';
+const POINT_STYLE_TEXT_STROKE_WIDTH = 1;
 
 /**
  * 星座の座標のレイヤーの、描画と操作を管理するハンドラー
@@ -48,6 +54,10 @@ export class PointLayerHandler {
    * 星座の座標の数字表示箇所の塗り潰し
    */
   private textFill: Fill;
+  /**
+   * 星座の座標の数字表示箇所の幅とその塗り潰しの定義
+   */
+  private textStroke: Stroke;
 
   constructor() {
     this.initPointLayer();
@@ -83,18 +93,26 @@ export class PointLayerHandler {
     this.source = new VectorSource({
       wrapX: false,
     });
-    this.pointFill = new Fill({ color: '#666666' });
-    this.pointStroke = new Stroke({ color: '#bada55', width: 1 });
+    this.pointFill = new Fill({ color: POINT_STYLE_FILL_COLOR });
+    this.pointStroke = new Stroke({
+      color: POINT_STYLE_STROKE_COLOR,
+      width: POINT_STYLE_STROKE_WIDTH,
+    });
     this.pointStyle = new CircleStyle({
-      radius: 10,
+      radius: POINT_STYLE_RADIUS,
       fill: this.pointFill,
       stroke: this.pointStroke,
     });
 
-    this.textFill = new Fill({ color: 'white' });
+    this.textFill = new Fill({ color: POINT_STYLE_TEXT_COLOR });
+    this.textStroke = new Stroke({
+      color: POINT_STYLE_TEXT_COLOR,
+      width: POINT_STYLE_TEXT_STROKE_WIDTH,
+    });
     this.textStyle = new Text({
       text: '',
       fill: this.textFill,
+      stroke: this.textStroke,
     });
 
     this.style = new Style({
@@ -112,7 +130,7 @@ export class PointLayerHandler {
    * 地図描画時に呼び出されるFeature毎のstyleを返却する関数
    */
   private styleFuction(f: Feature): Style {
-    const orderStr = f.get('order') as string;
+    const orderStr = f.get(POINT_ORDER_PROPERTY_NAME) as string;
     this.textStyle.setText(orderStr);
     return this.style;
   }
