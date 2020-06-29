@@ -93,9 +93,9 @@ export class MapService implements OnDestroy {
       return;
     }
     // 処理をハンドラーに委譲
-    this.lineLayerHandler.drawLineOnLayer(this.mapPoints);
-    // 地図の中心を引いた線に合わせる
-    this.viewHandler.setCenterOfPoints(this.mapPoints);
+    const extent = this.lineLayerHandler.drawLineOnLayer(this.mapPoints);
+    // 地図の中心を引いた線に中心を合わせる
+    this.viewHandler.setCenterOfPoints(extent);
   }
 
   /**
