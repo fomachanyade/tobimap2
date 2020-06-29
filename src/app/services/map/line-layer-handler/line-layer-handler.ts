@@ -46,22 +46,20 @@ export class LineLayerHandler {
    * 保持しているレイヤーに線を描画
    * TODO: Promise化、エラーハンドリング
    * @param points 座標情報の配列
-   * @returns 実行成否
+   * @returns 線オブジェクトの範囲
    */
-  drawLineOnLayer(points: MapPointModule[]): boolean {
-    // TODO: この儀式の根拠を調べる
+  drawLineOnLayer(points: MapPointModule[]): number[] {
     const coords: number[][] = points.map((point) => {
-      // TODO: 定数を別ファイルから参照
-      // return transform(point.coordinate, 'EPSG:4326', 'EPSG:3857');
       return point.coordinate;
     });
     // 線が最後に始点に戻る様に始点を配列末尾に追加
     coords.push(coords[0]);
+    const lineGeometry = new LineString(coords);
     const featureLine = new Feature({
-      geometry: new LineString(coords),
+      geometry: lineGeometry,
     });
     this.source.addFeature(featureLine);
-    return true;
+    return lineGeometry.getExtent();
   }
 
   /**
