@@ -1,13 +1,13 @@
-import { AfterViewInit, Component, Output, EventEmitter } from '@angular/core';
-import Map from 'ol/Map';
-import { MapService } from '../services/map/map.service';
-import { toLonLat } from 'ol/proj';
-import { MapPointDialogComponent } from '../map-point-dialog/map-point-dialog.component';
+import { AfterViewInit, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import Map from 'ol/Map';
+import { MapPointDialogComponent } from '../map-point-dialog/map-point-dialog.component';
 import { MapPointService } from '../services/map-point/map-point.service';
+import { MapService } from '../services/map/map.service';
 
-const dialogWidth = '600px';
-const dialogHeight = '400px';
+const MAP_POINT_DIALOG_WIDTH = '600px';
+const MAP_POINT_DIALOG_HEIGHT = '400px';
+const MSG_ADD_MAP_POINT_FAIL = '座標の追加に失敗しました';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -39,23 +39,31 @@ export class MapComponent implements AfterViewInit {
       });
   }
 
+  /**
+   * 地図にクリック時のイベントを設定
+   */
   private setOnClickMapEvent() {
     this.map.on('click', (evt: any) => {
       this.openMapPointModal(evt.coordinate);
     });
   }
 
+  /**
+   * 座標追加・編集モーダルを開く
+   * @param coord 座標
+   */
   private openMapPointModal(coord: number[]) {
     const mapPoint = this.mapPointService.getNextMapPoint(coord);
     // TODO: データに型をつける
     const dialogRef = this.dialog.open(MapPointDialogComponent, {
-      width: dialogWidth,
-      height: dialogHeight,
+      width: MAP_POINT_DIALOG_WIDTH,
+      height: MAP_POINT_DIALOG_HEIGHT,
       data: mapPoint,
     });
 
     const sub = dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        // 座標をサービスに追加
         const order: number = this.mapPointService.addMapPoint(
           result.name,
           coord,
@@ -63,9 +71,10 @@ export class MapComponent implements AfterViewInit {
         );
 
         if (order >= 0) {
+          // 地図に座標を描画
           this.mapService.addPointToMap(coord, order);
         } else {
-          alert('座標の追加に失敗しました');
+          alert(MSG_ADD_MAP_POINT_FAIL);
         }
       }
       sub.unsubscribe();
