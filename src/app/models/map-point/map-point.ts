@@ -1,10 +1,22 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-export class MapPointModule {
+/**
+ * 座標情報
+ */
+export class MapPoint {
+  /**
+   * 指定された順番
+   */
   order: number;
-  name: string;
-  description: string;
+  /**
+   * 名称
+   */
+  name?: string;
+  /**
+   * 詳細情報
+   */
+  description?: string;
+  /**
+   * 座標
+   */
   coordinate: number[];
 
   constructor(

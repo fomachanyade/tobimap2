@@ -4,6 +4,7 @@ import Map from 'ol/Map';
 import { MapPointDialogComponent } from '../map-point-dialog/map-point-dialog.component';
 import { MapPointService } from '../services/map-point/map-point.service';
 import { MapService } from '../services/map/map.service';
+import { MapPoint } from '../models/map-point/map-point';
 
 const MAP_POINT_DIALOG_WIDTH = '600px';
 const MAP_POINT_DIALOG_HEIGHT = '400px';
@@ -54,21 +55,16 @@ export class MapComponent implements AfterViewInit {
    */
   private openMapPointModal(coord: number[]) {
     const mapPoint = this.mapPointService.getNextMapPoint(coord);
-    // TODO: データに型をつける
     const dialogRef = this.dialog.open(MapPointDialogComponent, {
       width: MAP_POINT_DIALOG_WIDTH,
       height: MAP_POINT_DIALOG_HEIGHT,
       data: mapPoint,
     });
 
-    const sub = dialogRef.afterClosed().subscribe((result) => {
+    const sub = dialogRef.afterClosed().subscribe((result: MapPoint) => {
       if (result) {
         // 座標をサービスに追加
-        const order: number = this.mapPointService.addMapPoint(
-          result.name,
-          coord,
-          result.description
-        );
+        const order: number = this.mapPointService.addMapPoint(result);
 
         if (order >= 0) {
           // 地図に座標を描画

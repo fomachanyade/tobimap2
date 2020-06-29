@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MapPointModule } from '../map/modules/mappoint/mappoint.module';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 import { MapPointService } from '../services/map-point/map-point.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MapPointDialogComponent } from '../map-point-dialog/map-point-dialog.component';
@@ -17,7 +17,7 @@ const dialogHeight = '400px';
  * TODO:定数をファイルから参照する
  */
 export class NavigationComponent implements OnInit {
-  mapPointArray: MapPointModule[];
+  mapPointArray: MapPoint[];
 
   constructor(
     public dialog: MatDialog,
@@ -34,7 +34,7 @@ export class NavigationComponent implements OnInit {
       .subscribe((mapPointArray) => (this.mapPointArray = mapPointArray));
   }
 
-  openMapPointModal(mapPoint: MapPointModule) {
+  openMapPointModal(mapPoint: MapPoint) {
     const dialogRef = this.dialog.open(MapPointDialogComponent, {
       width: dialogWidth,
       height: dialogHeight,
@@ -42,7 +42,7 @@ export class NavigationComponent implements OnInit {
     });
     const sub = dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.mapPointService.editMapPoint(result as MapPointModule);
+        this.mapPointService.editMapPoint(result as MapPoint);
       }
       sub.unsubscribe();
     });

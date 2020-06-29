@@ -1,6 +1,6 @@
 import View from 'ol/View';
 import { fromLonLat, toLonLat } from 'ol/proj';
-import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 
 const DEFAULT_CENTER_LONLAT = [139.339285, 35.670167];
 const DEFAULT_ZOOM = 14;
@@ -37,7 +37,7 @@ export class OlViewHandler {
    * @param points 座標情報の配列
    * TODO:ズーム率の調整
    */
-  setCenterOfPoints(points: MapPointModule[]): void {
+  setCenterOfPoints(points: MapPoint[]): void {
     const lonLats: number[][] = points.map((point) => {
       return toLonLat(point.coordinate);
     });

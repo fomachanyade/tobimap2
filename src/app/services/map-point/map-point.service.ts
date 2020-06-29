@@ -1,56 +1,83 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
-import { MapPointModule } from '../../map/modules/mappoint/mappoint.module';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * 座標情報を管理するサービス
+ */
 export class MapPointService {
-  private mapPointArray: MapPointModule[] = new Array<MapPointModule>();
+  /**
+   * 座標情報の配列
+   */
+  private mapPoints: MapPoint[] = [];
 
   constructor() {
     this.initMapPointArray();
   }
 
-  getMapPointArray(): Observable<MapPointModule[]> {
-    return of(this.mapPointArray);
-  }
-
-  // 地図上の点を追加するメソッドです
-  addMapPoint(name: string, coord: number[], description: string): number {
-    // TODO: 処理が重複しているので修正
-    const mapPoint = this.getNextMapPoint(coord);
-    mapPoint.name = name;
-    mapPoint.description = description;
-    this.mapPointArray.push(mapPoint);
-    return mapPoint.order;
+  /**
+   * 座標情報の配列の購読を返却
+   */
+  getMapPointArray(): Observable<MapPoint[]> {
+    return of(this.mapPoints);
   }
 
   /**
    * 座標追加モーダルを開く時に、モーダルに表示するためのデータを返却する
    * @param coord 座標情報
    */
-  getNextMapPoint(coord: number[]): MapPointModule {
-    const nextOrderNum: number = this.mapPointArray.length + 1;
-    return new MapPointModule(nextOrderNum, coord);
+  getNextMapPoint(coord: number[]): MapPoint {
+    const nextOrderNum: number = this.mapPoints.length + 1;
+    return new MapPoint(nextOrderNum, coord);
   }
 
-  editMapPoint(mapPoint: MapPointModule): void {
-    const target = this.mapPointArray.find((p) => p.order === mapPoint.order);
+  /**
+   * 地図上の点を追加
+   * @param mapPoint 座標情報
+   * @returns 追加後の配列の長さ
+   */
+  addMapPoint(mapPoint: MapPoint): number {
+    return this.mapPoints.push(mapPoint);
+  }
+
+  /**
+   * 座標情報を更新
+   * @param mapPoint 座標情報
+   * @returns 更新成否
+   */
+  editMapPoint(mapPoint: MapPoint): boolean {
+    const target = this.mapPoints.find((p) => p.order === mapPoint.order);
     if (target) {
       target.name = mapPoint.name;
       target.description = mapPoint.description;
+      return true;
+    } else {
+      return false;
     }
   }
 
-  deleteMapPoint(mapPoint: MapPointModule) {
-    const index = this.mapPointArray.indexOf(mapPoint);
-    this.mapPointArray.splice(index, 1);
+  /**
+   * 指定の座標情報を削除
+   * @param mapPoint 座標情報
+   * @return
+   */
+  deleteMapPoint(mapPoint: MapPoint): boolean {
+    const index = this.mapPoints.indexOf(mapPoint);
+    if (index >= 0) {
+      this.mapPoints.splice(index, 1);
+    } else {
+      return false;
+    }
   }
 
-  // TODO:firebaseから持ってくる
-  private initMapPointArray(): Array<MapPointModule> {
+  /**
+   * 座標情報を初期化
+   * TODO:firebaseから持ってくる
+   */
+  private initMapPointArray(): MapPoint[] {
     return null;
   }
 }

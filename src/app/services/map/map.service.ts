@@ -5,7 +5,7 @@ import { Tile as TileLayer } from 'ol/layer.js';
 import Map from 'ol/Map';
 import XYZ from 'ol/source/XYZ';
 import { Subscription } from 'rxjs';
-import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 import { MapPointService } from '../map-point/map-point.service';
 import { LineLayerHandler } from './line-layer-handler/line-layer-handler';
 import { OlViewHandler } from './ol-view-handler/ol-view-handler';
@@ -50,7 +50,7 @@ export class MapService implements OnDestroy {
   /**
    * 座標情報の配列
    */
-  private mapPoints: Array<MapPointModule>;
+  private mapPoints: Array<MapPoint>;
 
   /**
    * 座標情報の配列の購読
@@ -77,12 +77,11 @@ export class MapService implements OnDestroy {
 
   /**
    * マップクリック時にマップに座標を追加
-   * @param coord 座標
-   * @param order 順番
+   * @param mapPoint 座標情報
    */
-  addPointToMap(coord: number[], order: number): void {
+  addPointToMap(mapPoint: MapPoint): void {
     // 処理をハンドラーに委譲
-    this.pointLayerHandler.drawPointOnLayer(coord, order);
+    this.pointLayerHandler.drawPointOnLayer(mapPoint);
   }
 
   /**

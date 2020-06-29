@@ -4,6 +4,7 @@ import { Vector as VectorLayer } from 'ol/layer.js';
 import { Vector as VectorSource } from 'ol/source.js';
 import { Fill, Stroke, Text, Style } from 'ol/style';
 import CircleStyle from 'ol/style/Circle';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 
 /**
  * 座標Featureの順序プロパティの名前
@@ -72,16 +73,15 @@ export class PointLayerHandler {
 
   /**
    * 保持しているレイヤーに座標の点を描画
-   * @param coord 座標
-   * @param order 順番
+   * @param mapPoint 座標情報
    */
-  drawPointOnLayer(coord: number[], order: number): void {
+  drawPointOnLayer(mapPoint: MapPoint): void {
     // TODO: 定数を別ファイルから参照
     const featurePoint = new Feature({
-      geometry: new Point(coord),
+      geometry: new Point(mapPoint.coordinate),
       size: 5,
     }) as any;
-    featurePoint.set('order', order.toString());
+    featurePoint.set(POINT_ORDER_PROPERTY_NAME, mapPoint.order.toString());
     this.source.addFeature(featurePoint);
   }
 

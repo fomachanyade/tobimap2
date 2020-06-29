@@ -4,7 +4,7 @@ import { Vector as VectorLayer } from 'ol/layer.js';
 import { transform } from 'ol/proj';
 import { Vector as VectorSource } from 'ol/source';
 import { Stroke, Style } from 'ol/style';
-import { MapPointModule } from 'src/app/map/modules/mappoint/mappoint.module';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 
 const LINE_STYLE_STROKE_COLOR = 'rgba(64, 80, 97, 1)';
 const LINE_STYLE_STROKE_WIDTH = 2;
@@ -49,7 +49,7 @@ export class LineLayerHandler {
    * @param points 座標情報の配列
    * @returns 線オブジェクトの範囲
    */
-  drawLineOnLayer(points: MapPointModule[]): number[] {
+  drawLineOnLayer(points: MapPoint[]): number[] {
     const coords: number[][] = points.map((point) => {
       return point.coordinate;
     });

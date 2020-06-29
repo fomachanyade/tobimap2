@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MapPointModule } from '../map/modules/mappoint/mappoint.module';
+import { MapPoint } from 'src/app/models/map-point/map-point';
 import { MapPointService } from '../services/map-point/map-point.service';
 import { MyErrorStateMatcher } from './my-error-state-matcher/my-error-state-matcher';
 
@@ -17,7 +17,7 @@ export class MapPointDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<MapPointDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MapPointModule,
+    @Inject(MAT_DIALOG_DATA) public data: MapPoint,
     private mapPointService: MapPointService
   ) {}
 
@@ -32,7 +32,7 @@ export class MapPointDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  deleteMapPoint(mapPoint: MapPointModule): void {
+  deleteMapPoint(mapPoint: MapPoint): void {
     this.mapPointService.deleteMapPoint(mapPoint);
   }
   onClickOkButton() {
