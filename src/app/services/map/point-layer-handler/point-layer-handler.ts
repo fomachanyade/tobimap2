@@ -84,7 +84,7 @@ export class PointLayerHandler {
 
   /**
    * 複数の座標を地図に描画
-   * @param mapPoints
+   * @param mapPoints 座標情報の配列
    */
   drawMultiplePointsOnLayer(mapPoints: MapPoint[]): void {
     this.source.clear();

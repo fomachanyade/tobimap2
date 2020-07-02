@@ -2,13 +2,13 @@
   "name": "front",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
-    "format": "prettier --write 'src/**/*.ts'"
+    "ng": "npx ng",
+    "start": "npx ng serve",
+    "build": "npx ng build",
+    "test": "npx ng test",
+    "lint": "npx ng lint",
+    "e2e": "npx ng e2e",
+    "format": "npx prettier --write 'src/**/*.ts'"
   },
   "private": true,
   "dependencies": {
@@ -30,7 +30,7 @@
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1000.0",
+    "@angular-devkit/build-angular": "^0.901.9",
     "@angular/cli": "^9.0.7",
     "@angular/compiler-cli": "^9.1.11",
     "@angular/language-service": "^9.0.7",
