@@ -13,6 +13,8 @@ import { PointLayerHandler } from './point-layer-handler/point-layer-handler';
 
 const MSG_INVALID_POINTS_LENGTH =
   '地図をクリックして勤務先を複数選択してください';
+const INVALID_POINTS_LENGTH_TO_DRAW_POINTS = 1;
+const INVALID_POINTS_LENGTH_TO_DRAW_LINE = 2;
 const IMAGE_DOWNLOAD_ANCHOR_ELEMENT_ID = 'image-download';
 @Injectable({
   providedIn: 'root',
@@ -50,7 +52,7 @@ export class MapService implements OnDestroy {
   /**
    * 座標情報の配列
    */
-  private mapPoints: Array<MapPoint>;
+  private mapPoints: MapPoint[] = [];
 
   /**
    * 座標情報の配列の購読
@@ -69,8 +71,8 @@ export class MapService implements OnDestroy {
    */
   async getMap(): Promise<Map> {
     return new Promise((resolve) => {
-      this.initMap().then(() => {
-        resolve(this.map);
+      this.initMap().then((map) => {
+        resolve(map);
       });
     });
   }
@@ -87,24 +89,32 @@ export class MapService implements OnDestroy {
   /**
    * 座標を地図に再描画
    * 座標削除時に呼び出される
+   * @returns 成否フラグ
    */
-  reDrawPointsOnMap(): void {
+  reDrawPointsOnMap(): boolean {
+    if (this.mapPoints.length < INVALID_POINTS_LENGTH_TO_DRAW_POINTS) {
+      alert(MSG_INVALID_POINTS_LENGTH);
+      return false;
+    }
     // 処理をハンドラーに委譲
     this.pointLayerHandler.drawMultiplePointsOnLayer(this.mapPoints);
+    return true;
   }
 
   /**
    * 座標を繋ぐ線を地図に描画
+   * @returns 成否フラグ
    */
-  drawLine() {
-    if (this.mapPoints.length < 1) {
+  drawLine():boolean {
+    if (this.mapPoints.length < INVALID_POINTS_LENGTH_TO_DRAW_LINE) {
       alert(MSG_INVALID_POINTS_LENGTH);
-      return;
+      return false;
     }
     // 処理をハンドラーに委譲
     const extent = this.lineLayerHandler.drawLineOnLayer(this.mapPoints);
     // 地図の中心を引いた線に中心を合わせる
     this.viewHandler.setCenterOfPoints(extent);
+    return true
   }
 
   /**
@@ -137,8 +147,8 @@ export class MapService implements OnDestroy {
   /**
    * 地図オブジェクトとプロパティーの初期化
    */
-  private initMap(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  private initMap(): Promise<Map> {
+    return new Promise<Map>((resolve, reject) => {
       this.baseLayer = new TileLayer({
         source: new XYZ({
           url: 'http://tile.osm.org/{z}/{x}/{y}.png',
@@ -165,7 +175,7 @@ export class MapService implements OnDestroy {
         layers: [this.baseLayer, lineLayer, pointLayer],
         view: view,
       });
-      resolve(true);
+      resolve(this.map);
     });
   }
 
