@@ -10,6 +10,7 @@ import { MapPoint } from 'src/app/models/map-point/map-point';
  * 座標Featureの順序プロパティの名前
  */
 const POINT_ORDER_PROPERTY_NAME = 'order';
+const POINT_MAPPOINT_PROPERTY_NAME = 'mapPoint';
 const FEATURE_TYPE_PROPERTY_NAME = 'type';
 const POINT_FEATURE_TYPE = 'mapPoint';
 const POINT_FEATURE_SIZE = 5;
@@ -152,6 +153,7 @@ export class PointLayerHandler {
     feature.setProperties({
       [FEATURE_TYPE_PROPERTY_NAME] : POINT_FEATURE_TYPE,
       [POINT_ORDER_PROPERTY_NAME] : mapPoint.order.toString(),
+      [POINT_MAPPOINT_PROPERTY_NAME] : mapPoint
     });
     return feature;
   }
