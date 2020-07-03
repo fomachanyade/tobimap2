@@ -10,6 +10,9 @@ import { MapPoint } from 'src/app/models/map-point/map-point';
  * 座標Featureの順序プロパティの名前
  */
 const POINT_ORDER_PROPERTY_NAME = 'order';
+const POINT_MAPPOINT_PROPERTY_NAME = 'mapPoint';
+const FEATURE_TYPE_PROPERTY_NAME = 'type';
+const POINT_FEATURE_TYPE = 'mapPoint';
 const POINT_FEATURE_SIZE = 5;
 const POINT_STYLE_FILL_COLOR = 'rgba(64, 80, 97, 0.8)';
 const POINT_STYLE_STROKE_COLOR = 'rgba(64, 80, 97, 1)';
@@ -147,7 +150,11 @@ export class PointLayerHandler {
       geometry: new Point(mapPoint.coordinate),
       size: POINT_FEATURE_SIZE,
     });
-    feature.set(POINT_ORDER_PROPERTY_NAME, mapPoint.order.toString());
+    feature.setProperties({
+      [FEATURE_TYPE_PROPERTY_NAME]: POINT_FEATURE_TYPE,
+      [POINT_ORDER_PROPERTY_NAME]: mapPoint.order.toString(),
+      [POINT_MAPPOINT_PROPERTY_NAME]: mapPoint,
+    });
     return feature;
   }
 }

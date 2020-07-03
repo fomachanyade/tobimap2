@@ -105,7 +105,7 @@ export class MapService implements OnDestroy {
    * 座標を繋ぐ線を地図に描画
    * @returns 成否フラグ
    */
-  drawLine():boolean {
+  drawLine(): boolean {
     if (this.mapPoints.length < INVALID_POINTS_LENGTH_TO_DRAW_LINE) {
       alert(MSG_INVALID_POINTS_LENGTH);
       return false;
@@ -114,7 +114,7 @@ export class MapService implements OnDestroy {
     const extent = this.lineLayerHandler.drawLineOnLayer(this.mapPoints);
     // 地図の中心を引いた線に中心を合わせる
     this.viewHandler.setCenterOfPoints(extent);
-    return true
+    return true;
   }
 
   /**
@@ -142,6 +142,15 @@ export class MapService implements OnDestroy {
       });
     });
     this.map.renderSync();
+  }
+
+  /**
+   * 指定の座標に地図をフォーカスさせる関数
+   * @param coordinate 座標
+   */
+  setCenter(coordinate: number[]) {
+    // 処理をハンドラーに委譲
+    this.viewHandler.setCenterAtPoint(coordinate);
   }
 
   /**
