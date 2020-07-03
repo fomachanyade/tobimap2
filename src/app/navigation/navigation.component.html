@@ -23,7 +23,7 @@
         routerLink="."
         *ngFor="let point of mapPoints"
         [cdkDragData]="point"
-        (click)="openMapPointModal(point)"
+        (click)="moveCenterToClickedPoint(point)"
         cdkDrag
       >
         <span class="badge">{{ point.order }}</span> {{ point.name }}

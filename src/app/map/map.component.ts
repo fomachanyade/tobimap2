@@ -52,8 +52,8 @@ export class MapComponent implements AfterViewInit {
    */
   private setOnClickMapEvent(evt:any):void {
     const coordinate:number[] = evt.coordinate;
-    const pixcel:number[] = evt.pixcel;
-    const features = this.map.getFeaturesAtPixel(pixcel);
+    const pixel:number[] = evt.pixel;
+    const features = this.map.getFeaturesAtPixel(pixel);
     if(features){
       const pointFeature = features.find(f => f.get(FEATURE_TYPE_PROPERTY_NAME) === POINT_FEATURE_TYPE);
       if(pointFeature){

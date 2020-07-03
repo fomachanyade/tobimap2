@@ -145,6 +145,15 @@ export class MapService implements OnDestroy {
   }
 
   /**
+   * 指定の座標に地図をフォーカスさせる関数
+   * @param coordinate 座標
+   */
+  setCenter(coordinate:number[]){
+    // 処理をハンドラーに委譲
+    this.viewHandler.setCenterAtPoint(coordinate);
+  }
+
+  /**
    * 地図オブジェクトとプロパティーの初期化
    */
   private initMap(): Promise<Map> {

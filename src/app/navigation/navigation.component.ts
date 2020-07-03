@@ -1,19 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MapPoint } from 'src/app/models/map-point/map-point';
-import { MapPointService } from '../services/map-point/map-point.service';
-import { MatDialog } from '@angular/material/dialog';
 import {
   CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
+  transferArrayItem
 } from '@angular/cdk/drag-drop';
-import { MapPointDialogComponent } from '../map-point-dialog/map-point-dialog.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { MapPoint } from 'src/app/models/map-point/map-point';
+import { MapPointService } from '../services/map-point/map-point.service';
 import { MapService } from '../services/map/map.service';
-
-// TODO:定数をファイルから参照する
-const dialogWidth = '600px';
-const dialogHeight = '400px';
 
 @Component({
   selector: 'app-navigation',
@@ -32,7 +25,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    public dialog: MatDialog,
     private mapPointService: MapPointService,
     private mapServise: MapService
   ) {}
@@ -48,20 +40,11 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 座標編集モーダルを開く
+   * クリックされた座標に地図をフォーカスさせる関数
+   * @param mapPoint 座標情報
    */
-  openMapPointModal(mapPoint: MapPoint) {
-    const dialogRef = this.dialog.open(MapPointDialogComponent, {
-      width: dialogWidth,
-      height: dialogHeight,
-      data: mapPoint,
-    });
-    const sub = dialogRef.afterClosed().subscribe((result: MapPoint) => {
-      if (result) {
-        this.mapPointService.editMapPointInfo(result);
-      }
-      sub.unsubscribe();
-    });
+  moveCenterToClickedPoint(mapPoint:MapPoint):void{
+    this.mapServise.setCenter(mapPoint.coordinate);
   }
 
   /**
