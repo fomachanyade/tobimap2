@@ -38,14 +38,14 @@ export class OlViewHandler {
    *  地図を1つの座標情報にフォーカスさせる関数
    * @param coordinate 座標
    */
-  setCenterAtPoint(coordinate:number[]):void{
+  setCenterAtPoint(coordinate: number[]): void {
     this.view.animate({
       center: coordinate,
-      duration: MAP_SET_CENTER_ANIMATION_DURATION_SINGLE
+      duration: MAP_SET_CENTER_ANIMATION_DURATION_SINGLE,
     });
     this.view.animate({
       zoom: DEFAULT_ZOOM,
-      duration: MAP_SET_CENTER_ANIMATION_DURATION_SINGLE
+      duration: MAP_SET_CENTER_ANIMATION_DURATION_SINGLE,
     });
   }
 

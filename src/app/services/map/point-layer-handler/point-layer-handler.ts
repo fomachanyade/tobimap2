@@ -151,9 +151,9 @@ export class PointLayerHandler {
       size: POINT_FEATURE_SIZE,
     });
     feature.setProperties({
-      [FEATURE_TYPE_PROPERTY_NAME] : POINT_FEATURE_TYPE,
-      [POINT_ORDER_PROPERTY_NAME] : mapPoint.order.toString(),
-      [POINT_MAPPOINT_PROPERTY_NAME] : mapPoint
+      [FEATURE_TYPE_PROPERTY_NAME]: POINT_FEATURE_TYPE,
+      [POINT_ORDER_PROPERTY_NAME]: mapPoint.order.toString(),
+      [POINT_MAPPOINT_PROPERTY_NAME]: mapPoint,
     });
     return feature;
   }

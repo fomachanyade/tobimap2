@@ -1,7 +1,4 @@
-import {
-  CdkDragDrop,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MapPoint } from 'src/app/models/map-point/map-point';
@@ -43,7 +40,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
    * クリックされた座標に地図をフォーカスさせる関数
    * @param mapPoint 座標情報
    */
-  moveCenterToClickedPoint(mapPoint:MapPoint):void{
+  moveCenterToClickedPoint(mapPoint: MapPoint): void {
     this.mapServise.setCenter(mapPoint.coordinate);
   }
 
