@@ -30,7 +30,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
     this.subscription = this.getMapPointArray();
   }
 
-  getMapPointArray(): Subscription {
+  private getMapPointArray(): Subscription {
     return this.mapPointService
       .getMapPointArray()
       .subscribe((mapPoints) => (this.mapPoints = mapPoints));
