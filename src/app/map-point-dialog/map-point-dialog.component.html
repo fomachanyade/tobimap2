@@ -9,6 +9,7 @@
         name="name"
         formControlName="name"
         [attr.value]="data.name"
+        [attr.data-test]="'name'"
       />
       <mat-hint>バイト／勤務先名を入力してください</mat-hint>
       <mat-error *ngIf="formGroup.get('name').hasError('required')">
@@ -37,6 +38,7 @@
   <button
     mat-raised-button
     color="primary"
+    [attr.data-test]="'ok-button'"
     (click)="onClickOkButton()"
     cdkFocusInitial
   >

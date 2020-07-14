@@ -26,7 +26,8 @@
         (click)="moveCenterToClickedPoint(point)"
         cdkDrag
       >
-        <span class="badge">{{ point.order }}</span> {{ point.name }}
+        <span class="badge">{{ point.order }}</span> 
+        <span class='point-name' [attr.data-test]="'point-list'">{{ point.name }}</span>  
       </a>
     </mat-nav-list>
   </mat-sidenav>

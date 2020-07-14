@@ -10,14 +10,14 @@
       </span>
       <ul>
         <li>
-          <button mat-flat-button color="primary" (click)="drawLine()">
+          <button mat-flat-button color="primary" (click)="drawLine()"  [attr.data-test]="'write-map'">
             星座を書く
           </button>
         </li>
       </ul>
       <ul>
         <li>
-          <button mat-flat-button color="primary" (click)="saveMap()">
+          <button mat-flat-button color="primary" (click)="saveMap()"  [attr.data-test]="'export-map'">
             星座を保存する
           </button>
         </li>
