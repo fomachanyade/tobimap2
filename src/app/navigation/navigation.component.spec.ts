@@ -11,12 +11,9 @@ describe('NavigationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports:[
-        MatToolbarModule,
-        DragDropModule
-      ],
+      imports: [MatToolbarModule, DragDropModule],
       declarations: [NavigationComponent],
-      schemas: [ NO_ERRORS_SCHEMA ]
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
   }));
 

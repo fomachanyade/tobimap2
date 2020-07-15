@@ -9,48 +9,43 @@ import { MapPoint } from '../models/map-point/map-point';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  template: ''
+  template: '',
 })
 class NoopComponent {}
 
-const TEST_DIRECTIVES = [
-  MapPointDialogComponent,
-  NoopComponent
-];
+const TEST_DIRECTIVES = [MapPointDialogComponent, NoopComponent];
 
 @NgModule({
-  imports: [MatDialogModule, NoopAnimationsModule,ReactiveFormsModule],
+  imports: [MatDialogModule, NoopAnimationsModule, ReactiveFormsModule],
   exports: TEST_DIRECTIVES,
   declarations: TEST_DIRECTIVES,
-  entryComponents: [
-    MapPointDialogComponent
-  ],
+  entryComponents: [MapPointDialogComponent],
 })
-class DialogTestModule { }
+class DialogTestModule {}
 
 // なぜか２つ以上のテストがあると、要素を参照できない
 describe('MapPointDialogComponent', () => {
   let component: MapPointDialogComponent;
   let fixture: ComponentFixture<MapPointDialogComponent>;
-  let dialog:MatDialog;
+  let dialog: MatDialog;
   let overlayContainerElement: HTMLElement;
   let noop: ComponentFixture<NoopComponent>;
   // create new instance of FormBuilder
   const formBuilder: FormBuilder = new FormBuilder();
-  
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ 
-        DialogTestModule,
-        
-      ],
+      imports: [DialogTestModule],
       providers: [
-        { provide: OverlayContainer, useFactory: () => {
-          overlayContainerElement = document.createElement('div');
-          return { getContainerElement: () => overlayContainerElement };
-        }},
-        { provide: FormBuilder, useValue: formBuilder }
-      ]
+        {
+          provide: OverlayContainer,
+          useFactory: () => {
+            overlayContainerElement = document.createElement('div');
+            return { getContainerElement: () => overlayContainerElement };
+          },
+        },
+        { provide: FormBuilder, useValue: formBuilder },
+      ],
     });
     dialog = TestBed.get(MatDialog);
     noop = TestBed.createComponent(NoopComponent);
@@ -65,11 +60,11 @@ describe('MapPointDialogComponent', () => {
 
   it('should create', () => {
     const config = {
-      data: new MapPoint(1,[10,10])
+      data: new MapPoint(1, [10, 10]),
     };
     dialog.open(MapPointDialogComponent, config);
     noop.detectChanges(); // Updates the dialog in the overlay
-    
+
     const h2 = overlayContainerElement.querySelector('#mat-dialog-title-0');
     expect(h2.textContent).toBe('勤務先の編集');
   });

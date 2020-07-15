@@ -16,7 +16,7 @@ export class MatDialogMock {
   // with an afterClosed method that allows to subscribe to the dialog result observable.
   open() {
     return {
-      afterClosed: () => of({action: true})
+      afterClosed: () => of({ action: true }),
     };
   }
 }
@@ -31,15 +31,19 @@ describe('MapComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MatDialogModule, RouterTestingModule, HttpClientModule, BrowserAnimationsModule,
-        HttpClientModule, FlexLayoutModule,
+        MatDialogModule,
+        RouterTestingModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FlexLayoutModule,
       ],
       declarations: [MapComponent],
-      providers:[
-        {provide:MapService,useClass: MapService},
-        {provide:MapPointService,useClass:MapPointService},
-        {provide:MatDialog,useClass: MatDialogMock}
-      ]
+      providers: [
+        { provide: MapService, useClass: MapService },
+        { provide: MapPointService, useClass: MapPointService },
+        { provide: MatDialog, useClass: MatDialogMock },
+      ],
     }).compileComponents();
   }));
 
