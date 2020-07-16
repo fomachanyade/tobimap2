@@ -20,6 +20,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
    */
   mapPoints: MapPoint[];
   private subscription: Subscription;
+  private infoPageUrl = "https://github.com/fomachanyade/tobimap2#Tobimap";
 
   constructor(
     private mapPointService: MapPointService,
@@ -30,12 +31,9 @@ export class NavigationComponent implements OnInit, OnDestroy {
     this.subscription = this.getMapPointArray();
   }
 
-  private getMapPointArray(): Subscription {
-    return this.mapPointService
-      .getMapPointArray()
-      .subscribe((mapPoints) => (this.mapPoints = mapPoints));
+  openInfoPage():void{
+    window.open(this.infoPageUrl,'infoPage')
   }
-
   /**
    * クリックされた座標に地図をフォーカスさせる関数
    * @param mapPoint 座標情報
@@ -64,6 +62,12 @@ export class NavigationComponent implements OnInit, OnDestroy {
     if (hasUpdated) {
       this.mapServise.reDrawPointsOnMap();
     }
+  }
+
+  private getMapPointArray(): Subscription {
+    return this.mapPointService
+      .getMapPointArray()
+      .subscribe((mapPoints) => (this.mapPoints = mapPoints));
   }
 
   ngOnDestroy() {
